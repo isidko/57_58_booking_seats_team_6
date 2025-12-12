@@ -5,7 +5,7 @@ target-version = "py311"
 # Enable preview features.
 preview = true
 # Содержимое папки alembic-а в проверку не включаем
-exclude = ["app/alembic"]
+exclude = ["src/alembic"]
 
 [format]
 # Enable reformatting of code snippets in docstrings.
@@ -33,7 +33,7 @@ inline-quotes = "single"
 
 [lint.isort]
 case-sensitive = true
-known-local-folder = ["app"]
+known-local-folder = ["src"]
 
 [lint.mccabe]
 # Flag errors (`C901`) whenever the complexity level exceeds 5.
