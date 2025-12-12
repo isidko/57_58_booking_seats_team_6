@@ -23,4 +23,4 @@ jobs:
           pip install ruff==0.11.11
 
       - name: Test style
-        run: python -m ruff check ./src
+        run: python -m ruff check ./src/app
