@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 
 class Slot(AbstractIntIDModel):
+    """Модель временного слота."""
+
     start_time: Mapped[time] = mapped_column(
         Time,
         nullable=False,
@@ -24,37 +26,37 @@ class Slot(AbstractIntIDModel):
     description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
-        comment='Описание'
+        comment='Описание',
     )
     cafe_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('cafes.id'),
         nullable=False,
         index=True,
-        comment='ID кафе'
+        comment='ID кафе',
     )
     cafe: Mapped['Cafe'] = relationship(
         'Cafe',
         back_populates='slots',
-        lazy='joined'
+        lazy='joined',
     )
 
     __table_args__ = (
         CheckConstraint(
             'end_time > start_time',
-            name='check_end_time_after_start_time'
+            name='check_end_time_after_start_time',
         ),
         CheckConstraint(
             'EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 23',
-            name='check_valid_start_time_hour'
+            name='check_valid_start_time_hour',
         ),
         CheckConstraint(
             'EXTRACT(HOUR FROM end_time) BETWEEN 0 AND 23',
-            name='check_valid_end_time_hour'
+            name='check_valid_end_time_hour',
         ),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.id=}, '
             f'{self.start_time=}, '

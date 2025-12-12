@@ -1,7 +1,6 @@
-from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-
 from app.core.db import Base
+from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
-    pass
+    """Модель пользователя."""

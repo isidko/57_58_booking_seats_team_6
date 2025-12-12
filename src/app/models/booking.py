@@ -12,15 +12,16 @@ if TYPE_CHECKING:
 
 
 class BookingStatus(IntEnum):
-    """Статусы бронирования как числовой Enum"""
-    OPEN = 0          # Открыто
-    ACTIVE = 1        # Активно
-    CANCELLED = 2     # Закрыто
+    """Статусы бронирования как числовой Enum."""
+
+    OPEN = 0  # Открыто
+    ACTIVE = 1  # Активно
+    CANCELLED = 2  # Закрыто
 
     # Для обратной совместимости со строковыми значениями
     @classmethod
     def from_string(cls, value: str) -> 'BookingStatus':
-        """Конвертировать строку в Enum"""
+        """Конвертировать строку в Enum."""
         mapping = {
             'open': cls.OPEN,
             'active': cls.ACTIVE,
@@ -29,7 +30,7 @@ class BookingStatus(IntEnum):
         return mapping.get(value.lower(), cls.OPEN)
 
     def to_string(self) -> str:
-        """Конвертировать Enum в строку"""
+        """Конвертировать Enum в строку."""
         mapping = {
             self.OPEN: 'open',
             self.ACTIVE: 'active',
@@ -39,7 +40,7 @@ class BookingStatus(IntEnum):
 
     @property
     def display_name(self) -> str:
-        """Человеко-читаемое название"""
+        """Человеко-читаемое название."""
         names = {
             self.OPEN: 'Открыто',
             self.ACTIVE: 'Активно',
@@ -49,36 +50,38 @@ class BookingStatus(IntEnum):
 
 
 class Booking(AbstractIntIDModel):
+    """Модель бронирования."""
+
     cafe_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('cafes.id'),
         nullable=False,
         index=True,
-        comment='ID кафе'
+        comment='ID кафе',
     )
     user_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('users.id', ondelete='RESTRICT'),
         nullable=False,
         index=True,
-        comment='ID пользователя'
+        comment='ID пользователя',
     )
     guest_number: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
-        description='Количество гостей'
+        description='Количество гостей',
     )
     note: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
-        comment='Заметка'
+        comment='Заметка',
     )
     status: Mapped[BookingStatus] = mapped_column(
         Integer,
         nullable=False,
         default=BookingStatus.OPEN,
         index=True,
-        comment='Статус бронирования'
+        comment='Статус бронирования',
     )
     booking_date: Mapped[date] = mapped_column(
         Date,
@@ -89,37 +92,37 @@ class Booking(AbstractIntIDModel):
     cafe: Mapped['Cafe'] = relationship(
         'Cafe',
         back_populates='bookings',
-        lazy='joined'
+        lazy='joined',
     )
     user: Mapped['User'] = relationship(
         'User',
         back_populates='bookings',
-        lazy='joined'
+        lazy='joined',
     )
     table_slots: Mapped[list['BookingTableSlot']] = relationship(
         'BookingTableSlot',
         back_populates='booking',
         cascade='save-update, merge',
-        lazy='selectin'
+        lazy='selectin',
     )
 
     @property
     def tables_slots_response(self) -> list[dict]:
-        """Форматированный список столиков и слотов для API"""
+        """Форматированный список столиков и слотов для API."""
         return [
             {
                 'id': table_slot.id,
                 'table': {
                     'id': table_slot.table.id,
                     'description': table_slot.table.description,
-                    'seat_number': table_slot.table.seat_number
+                    'seat_number': table_slot.table.seat_number,
                 },
                 'slot': {
                     'id': table_slot.slot.id,
                     'start_time': table_slot.slot.start_time.isoformat(),
                     'end_time': table_slot.slot.end_time.isoformat(),
-                    'description': table_slot.slot.description
-                }
+                    'description': table_slot.slot.description,
+                },
             }
             for table_slot in self.table_slots
             if table_slot.table.is_active and table_slot.slot.is_active
@@ -127,16 +130,16 @@ class Booking(AbstractIntIDModel):
 
     @property
     def customer_info(self) -> dict:
-        """Информация о клиенте"""
+        """Информация о клиенте."""
         return {
             'id': self.user.id,
             'name': self.user.full_name,
             'phone': self.user.phone,
-            'email': self.user.email
+            'email': self.user.email,
         }
 
     def to_response_dict(self) -> dict:
-        """Конвертация в формат ответа API"""
+        """Конвертация в формат ответа API."""
         return {
             'id': self.id,
             'cafe_id': self.cafe_id,
@@ -151,10 +154,10 @@ class Booking(AbstractIntIDModel):
             ),
             'is_active': self.is_active,
             'customer': self.customer_info,
-            'tables_slots': self.tables_slots_response
+            'tables_slots': self.tables_slots_response,
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f'{self.cafe_id=}, '
             f'{self.guest_number=}, '

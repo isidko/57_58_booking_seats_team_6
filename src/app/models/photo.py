@@ -5,16 +5,14 @@ from app.models import AbstractUUIDModel
 
 
 class Photo(AbstractUUIDModel):
+    """Модель фото."""
+
     location: Mapped[str] = mapped_column(
         String(1024),
         nullable=False,
         unique=True,
-        comment='Относительный путь к изображению'
+        comment='Относительный путь к изображению',
     )
 
     def __repr__(self) -> str:
-        return (
-            f'{self.id=}, '
-            f'{self.location=}, '
-            f'{super().__repr__()}'
-        )
+        return f'{self.id=}, {self.location=}, {super().__repr__()}'

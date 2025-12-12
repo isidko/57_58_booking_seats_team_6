@@ -10,34 +10,34 @@ if TYPE_CHECKING:
 
 
 class Table(AbstractIntIDModel):
+    """Модель стола для бронирования."""
+
     description: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
-        comment='Описание'
+        comment='Описание',
     )
     seat_number: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
-        comment='Количество посадочных мест'
+        comment='Количество посадочных мест',
     )
     cafe_id: Mapped[int] = mapped_column(
         Integer,
         ForeignKey('cafes.id'),
         nullable=False,
         index=True,
-        comment='ID кафе'
+        comment='ID кафе',
     )
     cafe: Mapped['Cafe'] = relationship(
         'Cafe',
         back_populates='tables',
-        lazy='joined'
+        lazy='joined',
     )
 
-    __table_args__ = (
-        CheckConstraint(
-            'seat_number > 0 AND seat_number < 20',
-            name='check_seat_number_positive_and_lt_max_seat_number'
-        )
+    __table_args__ = CheckConstraint(
+        'seat_number > 0 AND seat_number < 20',
+        name='check_seat_number_positive_and_lt_max_seat_number',
     )
 
     def __repr__(self) -> str:
