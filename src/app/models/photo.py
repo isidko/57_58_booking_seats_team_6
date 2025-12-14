@@ -1,14 +1,15 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.models import AbstractUUIDModel
+from app.core.constants import PHOTO_PATH_MAX_LENTH
+from app.models.base import TimestampedActiveModel, UUIDPKModel
 
 
-class Photo(AbstractUUIDModel):
+class Photo(TimestampedActiveModel, UUIDPKModel):
     """Модель фото."""
 
     location: Mapped[str] = mapped_column(
-        String(1024),
+        String(PHOTO_PATH_MAX_LENTH),
         nullable=False,
         unique=True,
         comment='Относительный путь к изображению',

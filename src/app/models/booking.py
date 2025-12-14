@@ -12,7 +12,7 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import TimestampedActiveIntIDModel
+from app.models.base import IntIDPKModel, TimestampedActiveModel
 
 if TYPE_CHECKING:
     from app.models import BookingTableSlot, Cafe, User
@@ -26,19 +26,19 @@ class BookingStatus(IntEnum):
     CANCELLED = 2     # Закрыто
 
 
-class Booking(TimestampedActiveIntIDModel):
+class Booking(TimestampedActiveModel, IntIDPKModel):
     """Модель бронирования."""
 
     cafe_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('cafes.id'),
+        ForeignKey('cafes.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
         comment='ID кафе',
     )
     user_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('users.id', ondelete='RESTRICT'),
+        ForeignKey('users.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
         comment='ID пользователя',
@@ -69,26 +69,24 @@ class Booking(TimestampedActiveIntIDModel):
     cafe: Mapped['Cafe'] = relationship(
         'Cafe',
         back_populates='bookings',
-        cascade='save-update, merge',
         lazy='joined',
     )
     user: Mapped['User'] = relationship(
         'User',
         back_populates='bookings',
-        cascade='save-update, merge',
         lazy='joined',
     )
     booking_table_slots: Mapped[list['BookingTableSlot']] = relationship(
         'BookingTableSlot',
         back_populates='booking',
-        cascade='save-update, merge',
+        cascade='save-update, merge, delete',
+        passive_deletes=True,
         lazy='selectin',
     )
 
     __table_args__ = (
-        CheckConstraint(
-            'status BETWEEN 0 AND 3', name='check_booking_status_range',
-        ),
+        CheckConstraint((guest_number > 0), name="check_guest_number_higher_then_0"),
+        CheckConstraint((status.in_([0,1,2])), name='check_booking_status_range'),
         UniqueConstraint(
             'user_id', 'booking_date', 'cafe_id', name='uq_user_date_cafe',
         ),

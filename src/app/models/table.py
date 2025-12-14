@@ -1,15 +1,16 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text
+from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import TimestampedActiveIntIDModel
+from app.core.constants import CAFE_MIN_SEAT_NUMBER, CAFE_MAX_SEAT_NUMBER
+from app.models.base import TimestampedActiveModel, IntIDPKModel
 
 if TYPE_CHECKING:
     from app.models import BookingTableSlot, Cafe
 
 
-class Table(TimestampedActiveIntIDModel):
+class Table(TimestampedActiveModel, IntIDPKModel):
     """Модель стола для бронирования."""
 
     description: Mapped[str | None] = mapped_column(
@@ -24,7 +25,7 @@ class Table(TimestampedActiveIntIDModel):
     )
     cafe_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('cafes.id'),
+        ForeignKey('cafes.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
         comment='ID кафе',
@@ -37,13 +38,14 @@ class Table(TimestampedActiveIntIDModel):
     booking_table_slots: Mapped[list['BookingTableSlot']] = relationship(
         'BookingTableSlot',
         back_populates='table',
-        cascade='save-update, merge',
+        cascade='save-update, merge, delete',
+        passive_deletes=True,
         lazy='selectin',
     )
 
     __table_args__ = (
         CheckConstraint(
-            'seat_number BETWEEN 1 AND 20',
+            (seat_number.between(CAFE_MIN_SEAT_NUMBER, CAFE_MAX_SEAT_NUMBER)),
             name='check_seat_number_positive_and_lt_max_seat_number',
         )
     )

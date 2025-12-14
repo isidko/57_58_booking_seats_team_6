@@ -4,6 +4,7 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy.orm import Mapped, relationship
 
 from app.core.db import Base
+from app.models.cafe_manager import cafe_managers
 
 if TYPE_CHECKING:
     from app.models import Booking, CafeManager
@@ -17,13 +18,12 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     bookings: Mapped[list['Booking']] = relationship(
         'Booking',
         back_populates='user',
-        cascade='save-update, merge',
+        cascade='save-update, merge, delete',
+        passive_deletes=True,
         lazy='selectin',
         order_by='Booking.booking_date.desc()',
     )
-    cafe_managers: Mapped[list['CafeManager']] = relationship(
-        'CafeManager',
-        back_populates='manager',
-        cascade='save-update, merge',
-        lazy='selectin',
+    managed_cafes: Mapped[list['Cafe']] = relationship(
+        'Cafe',
+        secondary=cafe_managers
     )

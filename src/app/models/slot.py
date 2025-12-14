@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import TimestampedActiveIntIDModel
+from app.models.base import IntIDPKModel, TimestampedActiveModel
 
 if TYPE_CHECKING:
     from app.models import BookingTableSlot, Cafe
 
 
-class Slot(TimestampedActiveIntIDModel):
+class Slot(TimestampedActiveModel, IntIDPKModel):
     """Модель временного слота."""
 
     start_time: Mapped[time] = mapped_column(
@@ -30,7 +30,7 @@ class Slot(TimestampedActiveIntIDModel):
     )
     cafe_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('cafes.id'),
+        ForeignKey('cafes.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
         comment='ID кафе',
@@ -43,14 +43,13 @@ class Slot(TimestampedActiveIntIDModel):
     booking_table_slots: Mapped[list['BookingTableSlot']] = relationship(
         'BookingTableSlot',
         back_populates='slot',
-        cascade='save-update, merge',
+        cascade='save-update, merge, delete',
+        passive_deletes=True,
         lazy='selectin',
     )
 
     __table_args__ = (
-        CheckConstraint(
-            'end_time > start_time', name='check_end_time_after_start_time',
-        ),
+        CheckConstraint( (end_time > start_time), name='check_end_time_after_start_time'),
     )
 
     def __repr__(self) -> str:

@@ -5,17 +5,26 @@ from sqlalchemy import CheckConstraint, ForeignKey, Numeric, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import TimestampedActiveIntIDModel
+from app.core.constants import DISH_NAME_MAX_LENGTH
+from app.models.base import TimestampedActiveModel, IntIDPKModel
+from app.models.dish_cafe import dish_cafes
 
 if TYPE_CHECKING:
     from app.models import Cafe
 
 
-class Dish(TimestampedActiveIntIDModel):
-    """Модель блюда."""
+class Dish(TimestampedActiveModel, IntIDPKModel):
+    """
+    Модель блюда.
+
+    We are not sure about the plural default naming, that is why
+    we need to overwrite the __tablename__ with "dishes"
+    """
+
+    __tablename__ = "dishes"
 
     name: Mapped[str] = mapped_column(
-        String(64),
+        String(DISH_NAME_MAX_LENGTH),
         nullable=False,
         index=True,
         comment='Название',
@@ -27,8 +36,8 @@ class Dish(TimestampedActiveIntIDModel):
     )
     photo_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('photo.id'),
-        nullable=False,
+        ForeignKey('photo.id', ondelete="SET NULL"),
+        nullable=True,
         index=True,
         comment='ID изображения',
     )
@@ -39,13 +48,11 @@ class Dish(TimestampedActiveIntIDModel):
     )
     cafes: Mapped[list['Cafe']] = relationship(
         'Cafe',
-        secondary='dishcafes',
-        back_populates='dishes',
-        lazy='selectin',
+        secondary=dish_cafes,
     )
 
     __table_args__ = (
-        CheckConstraint('price > 0', name='check_positive_price'),
+        CheckConstraint((price > 0), name='check_positive_price'),
     )
 
     def __repr__(self) -> str:

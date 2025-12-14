@@ -3,30 +3,30 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import TimestampedActiveIntIDModel
+from app.models.base import IntIDPKModel
 
 if TYPE_CHECKING:
     from app.models import Booking, Slot, Table
 
 
-class BookingTableSlot(TimestampedActiveIntIDModel):
+class BookingTableSlot(IntIDPKModel):
     """Промежуточная модель для связи бронирования, стола и слота."""
 
     booking_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('bookings.id'),
+        ForeignKey('bookings.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
     )
     table_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('tables.id'),
+        ForeignKey('tables.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
     )
     slot_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('slots.id'),
+        ForeignKey('slots.id', ondelete='CASCADE'),
         nullable=False,
         index=True,
     )

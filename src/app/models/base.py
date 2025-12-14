@@ -45,7 +45,7 @@ class TimestampedActiveModel(Base):
         self.is_active = False
 
 
-class TimestampedActiveIntIDModel(TimestampedActiveModel):
+class IntIDPKModel(TimestampedActiveModel):
     """Абстрактная модель с Integer ID."""
 
     __abstract__ = True
@@ -58,7 +58,7 @@ class TimestampedActiveIntIDModel(TimestampedActiveModel):
     )
 
 
-class TimestampedActiveUUIDModel(TimestampedActiveModel):
+class UUIDPKModel(TimestampedActiveModel):
     """Абстрактная модель с UUID ID."""
 
     __abstract__ = True
