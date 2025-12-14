@@ -1,7 +1,6 @@
 import os
 from typing import AsyncGenerator
 
-from app.core.config import settings
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -10,6 +9,8 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase, declared_attr
 from sqlalchemy.pool import QueuePool
+
+from app.core.config import settings
 
 
 class Base(DeclarativeBase):
