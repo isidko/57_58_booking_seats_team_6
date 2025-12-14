@@ -8,7 +8,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
 
-class AbstractBaseModel(Base):
+class TimestampedActiveModel(Base):
     """Абстрактная базовая модель с общими полями."""
 
     __abstract__ = True
@@ -35,11 +35,16 @@ class AbstractBaseModel(Base):
         comment='Флаг активности записи',
     )
 
-    def __repr__(self) -> str:
-        return f'{self.created_at=}, {self.updated_at=}, {self.is_active=}.'
+    def activate(self) -> None:
+        """Активировать запись."""
+        self.is_active = True
+
+    def deactivate(self) -> None:
+        """Деактивировать запись."""
+        self.is_active = False
 
 
-class AbstractIntIDModel(AbstractBaseModel):
+class TimestampedActiveIntIDModel(TimestampedActiveModel):
     """Абстрактная модель с Integer ID."""
 
     __abstract__ = True
@@ -47,16 +52,12 @@ class AbstractIntIDModel(AbstractBaseModel):
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
-        index=True,
         autoincrement=True,
         comment='Уникальный идентификатор (Integer)',
     )
 
-    def __repr__(self) -> str:
-        return f'{self.id=}, {super().__repr__()}'
 
-
-class AbstractUUIDModel(AbstractBaseModel):
+class TimestampedActiveUUIDModel(TimestampedActiveModel):
     """Абстрактная модель с UUID ID."""
 
     __abstract__ = True
@@ -65,9 +66,5 @@ class AbstractUUIDModel(AbstractBaseModel):
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-        index=True,
         comment='Уникальный идентификатор (UUID)',
     )
-
-    def __repr__(self) -> str:
-        return f'{self.id=}, {super().__repr__()}'

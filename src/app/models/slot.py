@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text, Time
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models import AbstractIntIDModel
+from app.models import TimestampedActiveIntIDModel
 
 if TYPE_CHECKING:
-    from app.models import Cafe
+    from app.models import BookingTableSlot, Cafe
 
 
-class Slot(AbstractIntIDModel):
+class Slot(TimestampedActiveIntIDModel):
     """Модель временного слота."""
 
     start_time: Mapped[time] = mapped_column(
@@ -40,19 +40,16 @@ class Slot(AbstractIntIDModel):
         back_populates='slots',
         lazy='joined',
     )
+    booking_table_slots: Mapped[list['BookingTableSlot']] = relationship(
+        'BookingTableSlot',
+        back_populates='slot',
+        cascade='save-update, merge',
+        lazy='selectin',
+    )
 
     __table_args__ = (
         CheckConstraint(
-            'end_time > start_time',
-            name='check_end_time_after_start_time',
-        ),
-        CheckConstraint(
-            'EXTRACT(HOUR FROM start_time) BETWEEN 0 AND 23',
-            name='check_valid_start_time_hour',
-        ),
-        CheckConstraint(
-            'EXTRACT(HOUR FROM end_time) BETWEEN 0 AND 23',
-            name='check_valid_end_time_hour',
+            'end_time > start_time', name='check_end_time_after_start_time',
         ),
     )
 
@@ -61,6 +58,5 @@ class Slot(AbstractIntIDModel):
             f'{self.id=}, '
             f'{self.start_time=}, '
             f'{self.end_time=}, '
-            f'{self.cafe_id=}, '
-            f'{super().__repr__()}'
+            f'{self.cafe_id=}.'
         )

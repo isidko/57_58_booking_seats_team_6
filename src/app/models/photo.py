@@ -15,4 +15,4 @@ class Photo(AbstractUUIDModel):
     )
 
     def __repr__(self) -> str:
-        return f'{self.id=}, {self.location=}, {super().__repr__()}'
+        return f'{self.id=}, {self.location=}.'
