@@ -31,3 +31,67 @@ ruff check --fix
 ```shell
 pre-commit install
 ```
+## Заметки о БД
+
+### Каскадные операции на уровне ORM
+
+Каскадные операции на уровне ORM используются **ТОЛЬКО НА СТОРОНЕ РОДИТЕЛЯ**!
+
+Ссылка на документацию: https://docs.sqlalchemy.org/en/20/orm/cascades.html
+
+Это означает, что мы используем параметр `cascade` в relationship только на родительской таблице, а не на дочерних.
+
+### Пример: Table и Cafe
+
+**Cafe имеет много Table:**
+
+```python
+tables: Mapped[list['Table']] = relationship(
+    'Table',
+    back_populates='cafe',
+    lazy='selectin',
+    cascade='save-update, merge, delete',
+    passive_deletes=True,  # используется, чтобы не дублировать на уровне ORM DB-уровень ondelete='CASCADE'
+    order_by='Table.seat_number',
+)
+```
+
+**Table имеет один Cafe:**
+
+```python
+cafe: Mapped['Cafe'] = relationship(
+    'Cafe',
+    back_populates='tables',
+    lazy='joined',
+    # cascade здесь не нужен!
+)
+```
+
+### M2M
+
+Таблица `dish_cafes` - это связь многие-ко-многим между таблицами `Dish` и `Cafe`.
+```python
+dish_cafes = Table(
+    "dish_cafes",
+    Base.metadata,
+    Column(
+        "dish_id",
+        ForeignKey("dishes.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "cafe_id",
+        ForeignKey("cafes.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+)
+```
+Пример таблицы связи многие-ко-многим (M2M) между сущностями Dish и Cafe на SQLAlchemy.
+- Используется составной первичный ключ из `dish_id` и `cafe_id`
+- ondelete="CASCADE" позволяет автоматически удалять связи при удалении блюда или кафе
+
+В этой M2M таблице используется составной первичный ключ из `dish_id` и `cafe_id`.
+
+Документация: https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
+
+Уникальное ограничение не требуется, так как составной ключ сам по себе ограничивает дубликаты. Например, комбинация `(1,2)` и `(1,2)` как первичный ключ будет **ОГРАНИЧЕНА**
