@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text, func
+from sqlalchemy import CheckConstraint, ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.constants import CAFE_MIN_SEAT_NUMBER, CAFE_MAX_SEAT_NUMBER
-from app.models.base import TimestampedActiveModel, IntIDPKModel
+from app.core.constants import CAFE_MAX_SEAT_NUMBER, CAFE_MIN_SEAT_NUMBER
+from app.models.base import IntIDPKModel, TimestampedActiveModel
 
 if TYPE_CHECKING:
     from app.models import BookingTableSlot, Cafe

@@ -1,5 +1,4 @@
-"""
-cascade on the ORM level is being being used ONLY ON THE PARENT SIDE!
+"""cascade on the ORM level is being being used ONLY ON THE PARENT SIDE!
 https://docs.sqlalchemy.org/en/20/orm/cascades.html
 This means that we use the "cascade" in relationship only on the parent
 table. Not on the child ones.
@@ -29,14 +28,19 @@ from sqlalchemy import CheckConstraint, ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.core.constants import NAME_MIN_LENGTH, ADDRESS_MIN_LENGTH, \
-    NAME_MAX_LENGTH, ADDRESS_MAX_LENGTH, PHONE_MAX_LENGTH
-from app.models.base import TimestampedActiveModel, IntIDPKModel
+from app.core.constants import (
+    ADDRESS_MAX_LENGTH,
+    ADDRESS_MIN_LENGTH,
+    NAME_MAX_LENGTH,
+    NAME_MIN_LENGTH,
+    PHONE_MAX_LENGTH,
+)
+from app.models.base import IntIDPKModel, TimestampedActiveModel
 from app.models.cafe_manager import cafe_managers
 from app.models.dish_cafe import dish_cafes
 
 if TYPE_CHECKING:
-    from app.models import Booking, CafeManager, Dish, Slot, Table
+    from app.models import Booking, Dish, Slot, Table
 
 
 class Cafe(TimestampedActiveModel, IntIDPKModel):
@@ -84,7 +88,7 @@ class Cafe(TimestampedActiveModel, IntIDPKModel):
     )
     managers: Mapped[list['User']] = relationship(
         'User',
-        secondary=cafe_managers
+        secondary=cafe_managers,
     )
     slots: Mapped[list['Slot']] = relationship(
         'Slot',

@@ -7,7 +7,7 @@ from app.core.db import Base
 from app.models.cafe_manager import cafe_managers
 
 if TYPE_CHECKING:
-    from app.models import Booking, CafeManager
+    from app.models import Booking
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
@@ -25,5 +25,5 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     )
     managed_cafes: Mapped[list['Cafe']] = relationship(
         'Cafe',
-        secondary=cafe_managers
+        secondary=cafe_managers,
     )

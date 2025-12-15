@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.constants import DISH_NAME_MAX_LENGTH
-from app.models.base import TimestampedActiveModel, IntIDPKModel
+from app.models.base import IntIDPKModel, TimestampedActiveModel
 from app.models.dish_cafe import dish_cafes
 
 if TYPE_CHECKING:
@@ -14,8 +14,7 @@ if TYPE_CHECKING:
 
 
 class Dish(TimestampedActiveModel, IntIDPKModel):
-    """
-    Модель блюда.
+    """Модель блюда.
 
     We are not sure about the plural default naming, that is why
     we need to overwrite the __tablename__ with "dishes"

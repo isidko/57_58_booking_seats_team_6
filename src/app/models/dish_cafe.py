@@ -1,5 +1,4 @@
-"""
-dish_cafes - M2M table between Dish table and a Cafe table.
+"""dish_cafes - M2M table between Dish table and a Cafe table.
 
 In this M2M table we are using the composite primary key - by dish_id and cafe_id.
 Ref to docs: https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
@@ -7,7 +6,7 @@ We do not need an unique constraint as the composite key will restrict it itself
 (1,2) and (1,2) as a PK is RESTRICTED!
 """
 
-from sqlalchemy import ForeignKey, Column, Table
+from sqlalchemy import Column, ForeignKey, Table
 
 from app.core.db import Base
 
