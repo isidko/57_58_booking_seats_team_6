@@ -7,13 +7,13 @@ from app.core.db import Base
 from app.models.cafe_manager import cafe_managers
 
 if TYPE_CHECKING:
-    from app.models import Booking
+    from app.models import Booking, Cafe
 
 
 class User(SQLAlchemyBaseUserTable[int], Base):
     """Модель пользователя."""
 
-    __tablename__ = "users"
+    __tablename__ = 'users'
 
     bookings: Mapped[list['Booking']] = relationship(
         'Booking',

@@ -20,7 +20,10 @@ class Base(DeclarativeBase):
     @classmethod
     def __tablename__(cls) -> str:
         """Автоматическое именование таблиц."""
-        return f"{cls.__name__.lower()}s"
+        # Проверяем, не переопределен ли вручную
+        if hasattr(cls, '_custom_tablename'):
+            return cls._custom_tablename
+        return f'{cls.__name__.lower()}s'
 
 
 def get_database_url() -> str:

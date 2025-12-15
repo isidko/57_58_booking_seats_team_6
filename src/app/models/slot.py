@@ -49,7 +49,9 @@ class Slot(TimestampedActiveModel, IntIDPKModel):
     )
 
     __table_args__ = (
-        CheckConstraint( (end_time > start_time), name='check_end_time_after_start_time'),
+        CheckConstraint(
+            (end_time > start_time), name='check_end_time_after_start_time',
+        ),
     )
 
     def __repr__(self) -> str:

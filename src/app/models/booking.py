@@ -85,8 +85,12 @@ class Booking(TimestampedActiveModel, IntIDPKModel):
     )
 
     __table_args__ = (
-        CheckConstraint((guest_number > 0), name="check_guest_number_higher_then_0"),
-        CheckConstraint((status.in_([0,1,2])), name='check_booking_status_range'),
+        CheckConstraint(
+            (guest_number > 0), name='check_guest_number_higher_then_0',
+        ),
+        CheckConstraint(
+            (status.in_([0, 1, 2])), name='check_booking_status_range',
+        ),
         UniqueConstraint(
             'user_id', 'booking_date', 'cafe_id', name='uq_user_date_cafe',
         ),

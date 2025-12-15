@@ -20,7 +20,7 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     we need to overwrite the __tablename__ with "dishes"
     """
 
-    __tablename__ = "dishes"
+    _custom_tablename = 'dishes'
 
     name: Mapped[str] = mapped_column(
         String(DISH_NAME_MAX_LENGTH),
@@ -35,7 +35,7 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     )
     photo_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('photo.id', ondelete="SET NULL"),
+        ForeignKey('photo.id', ondelete='SET NULL'),
         nullable=True,
         index=True,
         comment='ID изображения',
@@ -55,7 +55,4 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     )
 
     def __repr__(self) -> str:
-        return (
-            f'{self.name=}, '
-            f'{self.price=}.'
-        )
+        return f'{self.name=}, {self.price=}.'
