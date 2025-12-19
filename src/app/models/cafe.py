@@ -48,42 +48,34 @@ class Cafe(TimestampedActiveModel, IntIDPKModel):
     )
     photo_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('photo.id', ondelete='SET NULL'),
+        ForeignKey('photos.id', ondelete='SET NULL'),
         nullable=True,
         comment='ID изображения',
-
     )
     dishes: Mapped[list['Dish']] = relationship(
         'Dish',
         secondary=dish_cafes,
+        lazy='raise_on_sql',
     )
     bookings: Mapped[list['Booking']] = relationship(
         'Booking',
         back_populates='cafe',
-        cascade='save-update, merge, delete',
-        passive_deletes=True,
-        lazy='selectin',
-        order_by='Booking.booking_date.desc()',
+        lazy='raise_on_sql',
     )
     managers: Mapped[list['User']] = relationship(
         'User',
         secondary=cafe_managers,
+        lazy='selectin',
     )
     slots: Mapped[list['Slot']] = relationship(
         'Slot',
         back_populates='cafe',
-        lazy='selectin',
-        cascade='save-update, merge, delete',
-        passive_deletes=True,
-        order_by='Slot.start_time',
+        lazy='raise_on_sql',
     )
     tables: Mapped[list['Table']] = relationship(
         'Table',
         back_populates='cafe',
-        lazy='selectin',
-        cascade='save-update, merge, delete',
-        passive_deletes=True,
-        order_by='Table.seat_number',
+        lazy='raise_on_sql',
     )
 
     __table_args__ = (

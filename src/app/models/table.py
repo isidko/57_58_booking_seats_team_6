@@ -25,7 +25,7 @@ class Table(TimestampedActiveModel, IntIDPKModel):
     )
     cafe_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('cafes.id', ondelete='CASCADE'),
+        ForeignKey('cafes.id', ondelete='RESTRICT'),
         nullable=False,
         index=True,
         comment='ID кафе',
@@ -33,14 +33,12 @@ class Table(TimestampedActiveModel, IntIDPKModel):
     cafe: Mapped['Cafe'] = relationship(
         'Cafe',
         back_populates='tables',
-        lazy='joined',
+        lazy='selectin',
     )
     booking_table_slots: Mapped[list['BookingTableSlot']] = relationship(
         'BookingTableSlot',
         back_populates='table',
-        cascade='save-update, merge, delete',
-        passive_deletes=True,
-        lazy='selectin',
+        lazy='raise_on_sql',
     )
 
     __table_args__ = (

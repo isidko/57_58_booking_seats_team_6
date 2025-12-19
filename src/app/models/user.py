@@ -18,8 +18,7 @@ class User(SQLAlchemyBaseUserTable[int], Base):
     bookings: Mapped[list['Booking']] = relationship(
         'Booking',
         back_populates='user',
-        cascade='save-update, merge, delete',
-        passive_deletes=True,
+        cascade='save-update, merge',
         lazy='selectin',
         order_by='Booking.booking_date.desc()',
     )

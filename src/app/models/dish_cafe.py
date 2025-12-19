@@ -7,12 +7,12 @@ dish_cafes = Table(
     Base.metadata,
     Column(
         'dish_id',
-        ForeignKey('dishes.id', ondelete='CASCADE'),
+        ForeignKey('dishes.id', ondelete='RESTRICT'),
         primary_key=True,
     ),
     Column(
         'cafe_id',
-        ForeignKey('cafes.id', ondelete='CASCADE'),
+        ForeignKey('cafes.id', ondelete='RESTRICT'),
         primary_key=True,
     ),
 )

@@ -14,41 +14,42 @@ class BookingTableSlot(IntIDPKModel):
 
     booking_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('bookings.id', ondelete='CASCADE'),
+        ForeignKey('bookings.id', ondelete='RESTRICT'),
         nullable=False,
         index=True,
     )
     table_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('tables.id', ondelete='CASCADE'),
+        ForeignKey('tables.id', ondelete='RESTRICT'),
         nullable=False,
         index=True,
     )
     slot_id: Mapped[int] = mapped_column(
         Integer,
-        ForeignKey('slots.id', ondelete='CASCADE'),
+        ForeignKey('slots.id', ondelete='RESTRICT'),
         nullable=False,
         index=True,
+    )
+    table: Mapped['Table'] = relationship(
+        'Table',
+        back_populates='booking_table_slots',
+        lazy='selectin',
+    )
+    slot: Mapped['Slot'] = relationship(
+        'Slot',
+        back_populates='booking_table_slots',
+        lazy='selectin',
+    )
+    booking: Mapped['Booking'] = relationship(
+        'Booking',
+        back_populates='booking_table_slots',
+        lazy='raise_on_sql',
     )
 
     __table_args__ = (
         UniqueConstraint(
             'booking_id', 'table_id', 'slot_id', name='uq_booking_table_slot',
         ),
-    )
-    booking: Mapped['Booking'] = relationship(
-        'Booking',
-        back_populates='booking_table_slots',
-    )
-    table: Mapped['Table'] = relationship(
-        'Table',
-        back_populates='booking_table_slots',
-        lazy='joined',
-    )
-    slot: Mapped['Slot'] = relationship(
-        'Slot',
-        back_populates='booking_table_slots',
-        lazy='joined',
     )
 
     def __repr__(self) -> str:

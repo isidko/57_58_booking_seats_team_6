@@ -35,7 +35,7 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     )
     photo_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey('photo.id', ondelete='SET NULL'),
+        ForeignKey('photos.id', ondelete='SET NULL'),
         nullable=True,
         index=True,
         comment='ID изображения',
@@ -48,6 +48,7 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     cafes: Mapped[list['Cafe']] = relationship(
         'Cafe',
         secondary=dish_cafes,
+        lazy='selectin',
     )
 
     __table_args__ = (
