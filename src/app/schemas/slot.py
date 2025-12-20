@@ -94,6 +94,13 @@ class SlotUpdate(SlotBase):
     is_active: IsActive | None = None
 
     @model_validator(mode='after')
+    def validate_all_not_omitted(self) -> Self:
+        """Проверяет наличие как минимум одного поля при обновлении."""
+        if not self.model_fields_set:
+            raise ValueError('Пустой запрос не разрешён')
+        return self
+
+    @model_validator(mode='after')
     def validate_slot_time_range(self) -> Self:
         """Проверяет корректность временного диапазона слота."""
         if self.start_time is not None and self.end_time is not None:
