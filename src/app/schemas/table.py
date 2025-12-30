@@ -1,10 +1,10 @@
-from datetime import datetime
 from typing import Annotated, Self, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
 
 from app.core.constants import CAFE_MAX_SEAT_NUMBER, CAFE_MIN_SEAT_NUMBER
 from app.schemas.cafe import CafeShortInfo
+from app.schemas.common import TimestampedActiveSchema
 
 Description: TypeAlias = Annotated[
     str,
@@ -42,27 +42,12 @@ class TableCreate(TableBase):
     seat_number: SeatNumber
 
 
-class TableInfo(TableBase):
+class TableInfo(TableBase, TimestampedActiveSchema):
     """Полная информация о столе."""
 
     id: Id
     cafe: CafeShortInfo = Field(..., description='Информация о кафе')
     seat_number: SeatNumber
-    is_active: bool = Field(
-        ...,
-        description='Флаг активности',
-        examples=[True],
-    )
-    created_at: datetime = Field(
-        ...,
-        description='Дата создания',
-        examples=['2025-05-15T10:30:00Z'],
-    )
-    updated_at: datetime = Field(
-        ...,
-        description='Дата обновления',
-        examples=['2025-05-20T10:30:00Z'],
-    )
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -100,11 +85,12 @@ class TableShortInfo(BaseModel):
 class TableUpdate(TableBase):
     """Обновление стола - все поля Optional."""
 
-    is_active: bool | None = Field(
+    is_active: bool = Field(
         None,
-        description='Флаг активности',
+        description='Флаг активности (не может быть null)',
         examples=[False],
     )
+    seat_number: SeatNumber = None
 
     @model_validator(mode='after')
     def validate_at_least_one_field(self) -> Self:
