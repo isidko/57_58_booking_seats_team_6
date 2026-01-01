@@ -45,7 +45,7 @@ class Table(TimestampedActiveModel, IntIDPKModel):
         CheckConstraint(
             (seat_number.between(CAFE_MIN_SEAT_NUMBER, CAFE_MAX_SEAT_NUMBER)),
             name='check_seat_number_positive_and_lt_max_seat_number',
-        )
+        ),
     )
 
     def __repr__(self) -> str:

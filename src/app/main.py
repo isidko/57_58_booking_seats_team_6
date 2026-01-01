@@ -1,8 +1,15 @@
-from fastapi import Request
+import uvicorn
+from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+from app.core.config import settings
+from app.core.logging import configure_logging
 from app.exceptions.common import AppError
+
+configure_logging()
+
+app = FastAPI(title=settings.app_title)
 
 
 @app.exception_handler(AppError)  # noqa: F821
@@ -33,4 +40,14 @@ async def app_error_handler(
     return JSONResponse(
         status_code=exc.status_code,
         content={"detail": exc.message, "type": exc.__class__.__name__},
+    )
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_config=None,
+        log_level=None,
     )

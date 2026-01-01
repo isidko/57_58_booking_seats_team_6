@@ -1,3 +1,12 @@
+"""__init__.py импортирует Cafe из cafe.py.
+
+cafe.py импортировал из app.models (то есть из __init__.py)
+Это создает циклический импорт.
+
+Поэтому тут используем прямой импорт, а не относительный!
+from app.models.cafe_manager import cafe_managers  etc.
+"""
+
 from typing import TYPE_CHECKING
 
 from sqlalchemy import CheckConstraint, ForeignKey, String, Text, func
@@ -11,12 +20,9 @@ from app.core.constants import (
     NAME_MIN_LENGTH,
     PHONE_MAX_LENGTH,
 )
-from app.models import (
-    IntIDPKModel,
-    TimestampedActiveModel,
-    cafe_managers,
-    dish_cafes,
-)
+from app.models.base import IntIDPKModel, TimestampedActiveModel
+from app.models.cafe_manager import cafe_managers
+from app.models.dish_cafe import dish_cafes
 
 if TYPE_CHECKING:
     from app.models import Booking, Dish, Slot, Table, User
@@ -80,15 +86,16 @@ class Cafe(TimestampedActiveModel, IntIDPKModel):
 
     __table_args__ = (
         CheckConstraint(
-            (func.char_length(name) > NAME_MIN_LENGTH),
+            func.char_length(name) > NAME_MIN_LENGTH,
             name='ck_cafe_name_min_length',
         ),
         CheckConstraint(
-            (func.char_length(address) > ADDRESS_MIN_LENGTH),
+            func.char_length(address) > ADDRESS_MIN_LENGTH,
             name='ck_cafe_address_min_length',
         ),
         CheckConstraint(
-            'phone ~ "^\\+?[1-9]\\d{4,}$"', name='ck_cafe_phone_format',
+            phone.regexp_match("^\\+?[1-9]\\d{4,}$"),
+            name='ck_cafe_phone_format',
         ),
         CheckConstraint(
             'LENGTH(TRIM(phone)) >= 5', name='ck_cafe_phone_min_length',

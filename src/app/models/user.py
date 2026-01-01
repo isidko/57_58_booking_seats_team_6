@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, Integer, String, column, func
+from sqlalchemy import CheckConstraint, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.constants import (
@@ -34,21 +34,9 @@ class UserRole(IntEnum):
 class User(TimestampedActiveModel, IntIDPKModel):
     """Модель пользователя."""
 
-    __table_args__ = (
-        # Проверяет, что или email, или username присутствует
-        CheckConstraint(
-            'email IS NOT NULL OR username IS NOT NULL',
-            name='check_email_or_username_in_place',
-        ),
-    )
-
     # Имя пользователя: обязательное, уникальное, индексированное поле
     username: Mapped[str] = mapped_column(
         String(USERNAME_MAX_LENGTH),
-        CheckConstraint(
-            func.char_length(column('username')) >= USERNAME_MIN_LENGTH,
-            name='username_min_length',
-        ),
         nullable=False,
         unique=True,
         index=True,
@@ -58,10 +46,6 @@ class User(TimestampedActiveModel, IntIDPKModel):
     # Email: необязательное поле, может быть NULL
     email: Mapped[str | None] = mapped_column(
         String(EMAIL_MAX_LENGTH),
-        CheckConstraint(
-            func.char_length(column('email')) >= EMAIL_MIN_LENGTH,
-            name='email_min_length',
-        ),
         nullable=True,  # Поле может быть NULL
         unique=True,
         index=True,
@@ -71,10 +55,6 @@ class User(TimestampedActiveModel, IntIDPKModel):
     # Телефон: аналогично email, но с ограничением длины 20 символов
     phone: Mapped[str | None] = mapped_column(
         String(PHONE_MAX_LENGTH),
-        CheckConstraint(
-            func.char_length(column('phone')) >= PHONE_MIN_LENGTH,
-            name='phone_min_length',
-        ),
         nullable=True,
         unique=True,
         index=True,
@@ -84,10 +64,6 @@ class User(TimestampedActiveModel, IntIDPKModel):
     # Telegram ID
     tg_id: Mapped[str | None] = mapped_column(
         String(TG_ID_MAX_LENGTH),
-        CheckConstraint(
-            func.char_length(column('tg_id')) >= TG_ID_MIN_LENGTH,
-            name='tg_id_min_length',
-        ),
         nullable=True,
         unique=True,
         index=True,
@@ -97,11 +73,6 @@ class User(TimestampedActiveModel, IntIDPKModel):
     # Хеш пароля: обязательное поле, хранит хешированный пароль пользователя
     password_hash: Mapped[str] = mapped_column(
         String(PASSWORD_HASH_MAX_LENGTH),
-        CheckConstraint(
-            func.char_length(column('password_hash'))
-            >= PASSWORD_HASH_MIN_LENGTH,
-            name='password_hash_min_length',
-        ),
         nullable=False,
         comment='Хеш пароля',
     )
@@ -109,14 +80,6 @@ class User(TimestampedActiveModel, IntIDPKModel):
     # Роль пользователя: целочисленное значение из UserRole
     role: Mapped[UserRole] = mapped_column(
         Integer,
-        CheckConstraint(
-            column('role').in_([
-                UserRole.USER,
-                UserRole.MANAGER,
-                UserRole.ADMIN,
-            ]),
-            name='role_valid_values',
-        ),
         nullable=False,
         default=UserRole.USER,
         index=True,
@@ -134,6 +97,34 @@ class User(TimestampedActiveModel, IntIDPKModel):
         secondary=cafe_managers,
         back_populates='managers',
         lazy='raise_on_sql',
+    )
+
+    __table_args__ = (
+        CheckConstraint(
+            func.char_length(username) >= USERNAME_MIN_LENGTH,
+            name='username_min_length',
+        ),
+        CheckConstraint(
+            role.in_([r.value for r in UserRole]),
+            name='role_valid_values',
+        ),
+        CheckConstraint(
+            func.char_length(password_hash)
+            >= PASSWORD_HASH_MIN_LENGTH,
+            name='password_hash_min_length',
+        ),
+        CheckConstraint(
+            func.char_length(tg_id) >= TG_ID_MIN_LENGTH,
+            name='tg_id_min_length',
+        ),
+        CheckConstraint(
+            func.char_length(phone) >= PHONE_MIN_LENGTH,
+            name='phone_min_length',
+        ),
+        CheckConstraint(
+            func.char_length(email) >= EMAIL_MIN_LENGTH,
+            name='email_min_length',
+        ),
     )
 
     def __repr__(self) -> str:

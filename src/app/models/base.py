@@ -16,12 +16,14 @@ class TimestampedActiveModel(Base):
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
+        default=datetime.now,
         server_default=func.now(),
         nullable=False,
         comment='Дата и время создания записи',
     )
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
+        default=datetime.now,
         server_default=func.now(),
         onupdate=func.now(),
         nullable=False,
