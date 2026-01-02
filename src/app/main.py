@@ -3,6 +3,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from loguru import logger
 
+from app.api.routers import main_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.exceptions.common import AppError
@@ -10,6 +11,8 @@ from app.exceptions.common import AppError
 configure_logging()
 
 app = FastAPI(title=settings.app_title)
+
+app.include_router(main_router)
 
 
 @app.exception_handler(AppError)  # noqa: F821

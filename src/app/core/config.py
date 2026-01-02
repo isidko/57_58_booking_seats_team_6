@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     first_superuser_password: str
     superuser_password_min_length: int
 
+    secret_key: str
+    algorithm: str
+    access_token_expire_minutes: int
+
     environment: str
     loglevel: LogLevel
 

@@ -61,6 +61,7 @@ class Cafe(TimestampedActiveModel, IntIDPKModel):
     dishes: Mapped[list['Dish']] = relationship(
         'Dish',
         secondary=dish_cafes,
+        back_populates='cafes',
         lazy='raise_on_sql',
     )
     bookings: Mapped[list['Booking']] = relationship(

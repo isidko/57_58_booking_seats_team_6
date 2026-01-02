@@ -48,6 +48,7 @@ class Dish(TimestampedActiveModel, IntIDPKModel):
     cafes: Mapped[list['Cafe']] = relationship(
         'Cafe',
         secondary=dish_cafes,
+        back_populates='dishes',
         lazy='selectin',
     )
 

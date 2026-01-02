@@ -1,3 +1,5 @@
+from enum import StrEnum
+
 # Общие ограничения для названий и адресов
 NAME_MIN_LENGTH = 2
 NAME_MAX_LENGTH = 200
@@ -37,3 +39,66 @@ PASSWORD_HASH_MIN_LENGTH = 4
 
 DEFAULT_QUERY_LIMIT = 100
 MAX_QUERY_LIMIT = 1000
+
+
+class Scopes(StrEnum):
+    """Перечень прав для разграничения доступа в API."""
+
+    USERS_READ = "users:read"
+    USERS_WRITE = "users:write"
+    USERS_UPDATE = "users:update"
+    USERS_ME = "users:me"
+
+    CAFES_READ = "cafes:read"
+    CAFES_WRITE = "cafes:write"
+    CAFES_UPDATE = "cafes:update"
+
+    TABLES_READ = "tables:read"
+    TABLES_WRITE = "tables:write"
+    TABLES_UPDATE = "tables:update"
+
+    TIME_SLOTS_READ = "time_slots:read"
+    TIME_SLOTS_WRITE = "time_slots:write"
+    TIME_SLOTS_UPDATE = "time_slots:update"
+
+    DISHES_READ = "dishes:read"
+    DISHES_WRITE = "dishes:write"
+    DISHES_UPDATE = "dishes:update"
+
+    BOOKING_READ = "booking:read"
+    BOOKING_WRITE = "booking:write"
+    BOOKING_UPDATE = "booking:update"
+
+    MEDIA_READ = "media:read"
+    MEDIA_WRITE = "media:write"
+
+
+ADMIN_PERMISSIONS = [scope.value for scope in Scopes]
+
+USER_PERMISSIONS = [
+    Scopes.USERS_ME.value,
+    Scopes.USERS_UPDATE.value,
+    Scopes.CAFES_READ.value,
+    Scopes.TABLES_READ.value,
+    Scopes.TIME_SLOTS_READ.value,
+    Scopes.DISHES_READ.value,
+    Scopes.MEDIA_READ.value,
+    Scopes.BOOKING_READ.value,
+    Scopes.BOOKING_WRITE.value,
+    Scopes.BOOKING_UPDATE.value,
+]
+
+MANAGER_PERMISSIONS = list({
+    Scopes.USERS_READ.value,
+    Scopes.USERS_UPDATE.value,
+    Scopes.CAFES_UPDATE.value,
+    Scopes.CAFES_WRITE.value,
+    Scopes.TABLES_WRITE.value,
+    Scopes.TABLES_UPDATE.value,
+    Scopes.TIME_SLOTS_WRITE.value,
+    Scopes.TIME_SLOTS_UPDATE.value,
+    Scopes.DISHES_WRITE.value,
+    Scopes.DISHES_UPDATE.value,
+    Scopes.MEDIA_WRITE.value,
+    *USER_PERMISSIONS,
+})
