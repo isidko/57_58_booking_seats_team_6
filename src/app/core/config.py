@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     postgres_password: str
     postgres_host: str
     postgres_port: int
-    postgres_dbname: str
+    postgres_db: str
     database_echo: bool
     database_command_timeout: int
 

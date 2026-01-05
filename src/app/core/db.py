@@ -28,7 +28,7 @@ class Base(DeclarativeBase):
 
 # Создаем движок
 engine = create_async_engine(
-    url=f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_dbname}",
+    url=f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_db}",
     pool_pre_ping=True,
     echo=settings.database_echo,
     connect_args={

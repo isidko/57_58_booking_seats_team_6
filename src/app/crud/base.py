@@ -114,7 +114,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         active_objects_only: bool = True,
         where_expr: ColumnElement[bool] = true(),
         options: Sequence[Load] = (),
-    ) -> Sequence[ModelType]:
+    ) -> list[ModelType]:
         """Получает несколько записей из базы данных.
 
         Поддерживает фильтрацию, пагинацию (limit/offset) и eager loading.
@@ -185,7 +185,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         query = query.limit(limit)
 
         # Выполняем запрос и возвращаем результаты
-        return (await session.execute(query)).scalars().all()
+        return list((await session.execute(query)).scalars().all())
 
     async def update(
         self,

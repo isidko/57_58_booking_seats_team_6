@@ -8,7 +8,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     Text,
-    UniqueConstraint,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -88,9 +87,6 @@ class Booking(TimestampedActiveModel, IntIDPKModel):
         ),
         CheckConstraint(
             (status.in_([0, 1, 2])), name='check_booking_status_range',
-        ),
-        UniqueConstraint(
-            'user_id', 'booking_date', 'cafe_id', name='uq_user_date_cafe',
         ),
     )
 

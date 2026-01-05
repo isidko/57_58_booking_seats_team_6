@@ -20,7 +20,7 @@ from app.models import (  # noqa: F401
     User,
 )
 
-db_url: str = f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_dbname}"
+db_url: str = f"postgresql+asyncpg://{settings.postgres_user}:{settings.postgres_password}@{settings.postgres_host}:{settings.postgres_port}/{settings.postgres_db}"
 
 config = context.config
 config.set_main_option('sqlalchemy.url', db_url)

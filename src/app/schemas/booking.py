@@ -58,6 +58,7 @@ TablesSlots: TypeAlias = Annotated[
         ...,
         description='Список столов и слотов для бронирования',
         examples=[[{'table_id': 1, 'slot_id': 1}]],
+        alias="tables_slots",
     ),
 ]
 
@@ -103,10 +104,12 @@ class TableSlotInfo(BaseModel):
 class BookingBase(BaseModel):
     """Общие поля booking для create/update."""
 
+    model_config = ConfigDict(populate_by_name=True)
+
     note: Note | None = None
     status: Status = BookingStatus.OPEN
     guest_number: GuestNumber
-    tables_slots: TablesSlots
+    booking_table_slots: TablesSlots
 
 
 class BookingCreate(BookingBase):
@@ -133,7 +136,7 @@ class BookingUpdate(BookingBase):
         description='ID кафе',
         examples=[1],
     )
-    tables_slots: TablesSlots = None
+    booking_table_slots: TablesSlots = None
     guest_number: GuestNumber = None
     status: Status = None
     booking_date: FutureDate = None
@@ -162,6 +165,6 @@ class BookingInfo(BookingBase, TimestampedActiveSchema):
     user: UserShortInfo
     cafe: CafeShortInfo
     booking_date: BookingDate
-    tables_slots: list[TableSlotInfo]
+    booking_table_slots: list[TableSlotInfo]
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, populate_by_name=True)
