@@ -8,7 +8,12 @@ from app.models import User
 from app.models.user import UserRole
 
 
-async def get_owned_by_pk(model: ModelType, session: AsyncSession, object_pk: Any, user_instance: User) -> ModelType:
+async def get_owned_by_pk(
+    model: type[ModelType],
+    session: AsyncSession,
+    object_pk: Any,
+    user_instance: User,
+) -> ModelType:
     """Check if this user owner of this object and return object if so.
 
     If it is admin or manager, return an object.

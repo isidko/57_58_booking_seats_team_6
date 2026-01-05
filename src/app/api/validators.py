@@ -77,7 +77,7 @@ def check_table_belongs_to_cafe(
         raise ObjectDoesNotBelongToAnotherObject(
             message=(
                 f"This table: {table.id} "
-                f"does not belong to this cafe: {cafe.id}",
+                f"does not belong to this cafe: {cafe.id}"
             ),
         )
 
@@ -91,7 +91,7 @@ def check_slot_belongs_to_cafe(
         raise ObjectDoesNotBelongToAnotherObject(
             message=(
                 f"This slot: {slot.id} "
-                f"does not belong to this cafe: {cafe.id}",
+                f"does not belong to this cafe: {cafe.id}"
             ),
         )
 
@@ -116,6 +116,6 @@ async def check_this_table_and_slot_are_free_for_this_date(
         raise CommonDBValidationError(
             message=(
                 f"This table {table.id} "
-                f"and slot {slot.id} already booked!",
+                f"and slot {slot.id} already booked!"
             ),
         )

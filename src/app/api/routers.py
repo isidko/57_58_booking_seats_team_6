@@ -1,8 +1,11 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import security_router
+from app.api.endpoints import auth_router, booking_router
 
 main_router = APIRouter()
 main_router.include_router(
-    security_router, prefix='/auth', tags=['auth'],
+    auth_router, prefix='/auth', tags=['auth'],
+)
+main_router.include_router(
+    booking_router, prefix='/booking', tags=['booking'],
 )

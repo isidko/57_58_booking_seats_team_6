@@ -2,7 +2,7 @@
 
 Revision ID: 01
 Revises: 
-Create Date: 2025-12-27 23:25:05.084521
+Create Date: 2026-01-03 20:16:02.872163
 
 """
 from typing import Sequence, Union
@@ -106,8 +106,7 @@ def upgrade() -> None:
     sa.CheckConstraint('status IN (0, 1, 2)', name='check_booking_status_range'),
     sa.ForeignKeyConstraint(['cafe_id'], ['cafes.id'], ondelete='RESTRICT'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='RESTRICT'),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('user_id', 'booking_date', 'cafe_id', name='uq_user_date_cafe')
+    sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_bookings_booking_date'), 'bookings', ['booking_date'], unique=False)
     op.create_index(op.f('ix_bookings_cafe_id'), 'bookings', ['cafe_id'], unique=False)
