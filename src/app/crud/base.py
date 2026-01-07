@@ -1,4 +1,4 @@
-from typing import Any, Generic, Sequence, Type, TypeVar
+from typing import Any, Generic, Optional, Sequence, Type, TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import ColumnElement, select, true
@@ -16,7 +16,7 @@ from app.core.db import Base
 # UpdateSchemaType: Pydantic схема для обновления (частичное обновление)
 ModelType = TypeVar('ModelType', bound=Base)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=BaseModel)
-UpdateSchemaType = TypeVar('UpdateSchemaType', bound=BaseModel)
+UpdateSchemaType = TypeVar('UpdateSchemaType', bound=Optional[BaseModel])
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
