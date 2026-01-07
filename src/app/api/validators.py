@@ -23,7 +23,7 @@ async def check_slot_exists(
 
     :return Slot
     """
-    slot = await slot_crud.get(session=session, obj_id=slot_id)
+    slot = await slot_crud.get_by_pk(session=session, obj_id=slot_id)
     if not slot:
         raise ObjectDoesNotExist(
             message=f"This slot {slot_id} does not exist!",
@@ -41,7 +41,7 @@ async def check_cafe_exists(
 
     :return Cafe
     """
-    cafe = await cafe_crud.get(session=session, obj_id=cafe_id)
+    cafe = await cafe_crud.get_by_pk(session=session, obj_id=cafe_id)
     if not cafe:
         raise ObjectDoesNotExist(
             message=f"This cafe {cafe_id} does not exist!",
@@ -59,7 +59,7 @@ async def check_table_exists(
 
     :return Table
     """
-    table = await table_crud.get(session=session, obj_id=table_id)
+    table = await table_crud.get_by_pk(session=session, obj_id=table_id)
     if not table:
         raise ObjectDoesNotExist(
             message=f"This table {table_id} does not exist!")
