@@ -6,8 +6,11 @@ NAME_MAX_LENGTH = 200
 ADDRESS_MIN_LENGTH = 5
 ADDRESS_MAX_LENGTH = 256
 
-# Ограничения для путей к файлам
+# Ограничения для фото
+ALLOWED_CONTENT_TYPES = ['image/jpeg', 'image/png', 'image/jpg']
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 МБ
 PHOTO_PATH_MAX_LENGTH = 1024
+UPLOAD_DIR = 'media'
 
 # Ограничения для кафе
 MAX_MANAGERS = 10
@@ -42,6 +45,9 @@ PASSWORD_HASH_MIN_LENGTH = 4
 
 DEFAULT_QUERY_LIMIT = 100
 MAX_QUERY_LIMIT = 1000
+
+# Для логгирования
+SYSTEM_USERNAME = 'SYSTEM'
 
 
 class Scopes(StrEnum):
