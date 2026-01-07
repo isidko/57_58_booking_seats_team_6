@@ -53,33 +53,33 @@ SYSTEM_USERNAME = 'SYSTEM'
 class Scopes(StrEnum):
     """Перечень прав для разграничения доступа в API."""
 
-    USERS_READ = "users:read"
-    USERS_WRITE = "users:write"
-    USERS_UPDATE = "users:update"
-    USERS_ME = "users:me"
+    USERS_READ = 'users:read'
+    USERS_WRITE = 'users:write'
+    USERS_UPDATE = 'users:update'
+    USERS_ME = 'users:me'
 
-    CAFES_READ = "cafes:read"
-    CAFES_WRITE = "cafes:write"
-    CAFES_UPDATE = "cafes:update"
+    CAFES_READ = 'cafes:read'
+    CAFES_WRITE = 'cafes:write'
+    CAFES_UPDATE = 'cafes:update'
 
-    TABLES_READ = "tables:read"
-    TABLES_WRITE = "tables:write"
-    TABLES_UPDATE = "tables:update"
+    TABLES_READ = 'tables:read'
+    TABLES_WRITE = 'tables:write'
+    TABLES_UPDATE = 'tables:update'
 
-    TIME_SLOTS_READ = "time_slots:read"
-    TIME_SLOTS_WRITE = "time_slots:write"
-    TIME_SLOTS_UPDATE = "time_slots:update"
+    TIME_SLOTS_READ = 'time_slots:read'
+    TIME_SLOTS_WRITE = 'time_slots:write'
+    TIME_SLOTS_UPDATE = 'time_slots:update'
 
-    DISHES_READ = "dishes:read"
-    DISHES_WRITE = "dishes:write"
-    DISHES_UPDATE = "dishes:update"
+    DISHES_READ = 'dishes:read'
+    DISHES_WRITE = 'dishes:write'
+    DISHES_UPDATE = 'dishes:update'
 
-    BOOKING_READ = "booking:read"
-    BOOKING_WRITE = "booking:write"
-    BOOKING_UPDATE = "booking:update"
+    BOOKING_READ = 'booking:read'
+    BOOKING_WRITE = 'booking:write'
+    BOOKING_UPDATE = 'booking:update'
 
-    MEDIA_READ = "media:read"
-    MEDIA_WRITE = "media:write"
+    MEDIA_READ = 'media:read'
+    MEDIA_WRITE = 'media:write'
 
 
 ADMIN_PERMISSIONS = [scope.value for scope in Scopes]
@@ -101,8 +101,6 @@ MANAGER_PERMISSIONS = list({
     Scopes.USERS_READ.value,
     Scopes.USERS_UPDATE.value,
     Scopes.CAFES_UPDATE.value,
-    Scopes.CAFES_WRITE.value,
-    Scopes.TABLES_WRITE.value,
     Scopes.TABLES_UPDATE.value,
     Scopes.TIME_SLOTS_WRITE.value,
     Scopes.TIME_SLOTS_UPDATE.value,
