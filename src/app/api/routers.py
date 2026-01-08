@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import auth_router, booking_router, cafes_router
+from app.api.endpoints import auth_router, booking_router, cafes_router, users_router
 
 main_router = APIRouter()
 main_router.include_router(
@@ -15,4 +15,9 @@ main_router.include_router(
     cafes_router,
     prefix='/cafes',
     tags=['cafes'],
+)
+main_router.include_router(
+    users_router,
+    prefix='/users',
+    tags=['users'],
 )
