@@ -10,7 +10,7 @@ services:
   db:
     image: postgres:17-alpine
     env_file:
-      - ../.env
+      - .env
     environment:
       PGDATA: /var/lib/postgresql/data
     volumes:
@@ -33,7 +33,7 @@ services:
   server:
     image: peterdockerhub/practicum-final:latest
     env_file:
-      - ../.env
+      - .env
     environment:
       <<: *backend-env
     depends_on: [db, rabbitmq, mailpit]
@@ -48,7 +48,7 @@ services:
   worker:
     image: peterdockerhub/practicum-final:latest
     env_file:
-      - ../.env
+      - .env
     environment:
       <<: *backend-env
     command: celery -A app.core.celery_app:celery_app worker -l info
@@ -57,7 +57,7 @@ services:
   flower:
     image: peterdockerhub/practicum-final:latest
     env_file:
-      - ../.env
+      - .env
     environment:
       <<: *backend-env
     command: celery -A app.core.celery_app:celery_app flower --port=5555
@@ -68,7 +68,9 @@ services:
   rabbitmq:
     image: rabbitmq:4.2.2-management
     env_file:
-      - ../.env
+      - .env
+    ports:
+      - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 

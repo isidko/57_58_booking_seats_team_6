@@ -69,6 +69,8 @@ services:
     image: rabbitmq:4.2.2-management
     env_file:
       - ../.env
+    ports:
+      - "15672:15672"
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
 
