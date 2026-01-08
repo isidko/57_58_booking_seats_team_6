@@ -46,7 +46,6 @@ Thumbs.db
 
 # Project specific
 tests/
-infra/
 openapi_schema.json
 ruff.toml
 .pre-commit-config.yaml

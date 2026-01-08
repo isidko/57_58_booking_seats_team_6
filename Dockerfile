@@ -13,6 +13,8 @@ RUN pip install --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 COPY src/ .
+COPY infra/startup.bash /app/startup.bash
+RUN chmod +x /app/startup.bash
 EXPOSE 8000
 
-CMD ["python", "-m", "app.main"]
+CMD ["/app/startup.bash"]

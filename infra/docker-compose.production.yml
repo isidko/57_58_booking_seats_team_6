@@ -1,12 +1,10 @@
 name: praktikum_final_project
 
-# переопределяем порты для чисто docker запуска
 x-backend-env: &backend-env
   POSTGRES_HOST: db
   MAIL_SERVER: mailpit
   RABBITMQ_HOST: rabbitmq
   ENVIRONMENT: PRODUCTION
-
 
 services:
   db:
@@ -33,17 +31,22 @@ services:
     restart: unless-stopped
 
   server:
-    build: ../
+    image: peterdockerhub/practicum-final:latest
     env_file:
       - ../.env
     environment:
       <<: *backend-env
-    ports:
-      - "8000:8000"
     depends_on: [db, rabbitmq, mailpit]
 
+  nginx:
+    image: peterdockerhub/practicum-final-nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ../nginx/logs:/var/log/nginx
+
   worker:
-    build: ../.
+    image: peterdockerhub/practicum-final:latest
     env_file:
       - ../.env
     environment:
@@ -52,7 +55,7 @@ services:
     depends_on: [db, rabbitmq]
 
   flower:
-    build: ../.
+    image: peterdockerhub/practicum-final:latest
     env_file:
       - ../.env
     environment:
@@ -75,7 +78,7 @@ services:
     volumes:
       - mailpit:/data
     ports:
-      - 8025:8025
+      - "8025:8025"
     environment:
       MP_MAX_MESSAGES: 5000
       MP_DATABASE: /data/mailpit.db

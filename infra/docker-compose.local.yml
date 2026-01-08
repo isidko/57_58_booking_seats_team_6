@@ -1,0 +1,91 @@
+name: praktikum_final_project
+
+# переопределяем порты для чисто docker запуска
+x-backend-env: &backend-env
+  POSTGRES_HOST: db
+  MAIL_SERVER: mailpit
+  RABBITMQ_HOST: rabbitmq
+  ENVIRONMENT: PRODUCTION
+
+
+services:
+  db:
+    image: postgres:17-alpine
+    env_file:
+      - ../.env
+    environment:
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    command: >
+      postgres -c max_connections=1000
+               -c shared_buffers=256MB
+               -c effective_cache_size=768MB
+               -c maintenance_work_mem=64MB
+               -c checkpoint_completion_target=0.7
+               -c wal_buffers=16MB
+               -c default_statistics_target=100
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+
+  server:
+    build: ../
+    env_file:
+      - ../.env
+    environment:
+      <<: *backend-env
+    depends_on: [db, rabbitmq, mailpit]
+
+  nginx:
+    build: ../nginx
+    ports:
+      - "80:80"
+
+  worker:
+    build: ../.
+    env_file:
+      - ../.env
+    environment:
+      <<: *backend-env
+    command: celery -A app.core.celery_app:celery_app worker -l info
+    depends_on: [db, rabbitmq]
+
+  flower:
+    build: ../.
+    env_file:
+      - ../.env
+    environment:
+      <<: *backend-env
+    command: celery -A app.core.celery_app:celery_app flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on: [rabbitmq]
+
+  rabbitmq:
+    image: rabbitmq:4.2.2-management
+    env_file:
+      - ../.env
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    volumes:
+      - mailpit:/data
+    ports:
+      - 8025:8025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+volumes:
+  pgdata:
+  rabbitmq-data:
+  mailpit:
