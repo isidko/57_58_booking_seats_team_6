@@ -3,9 +3,9 @@ import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.crud.cafe import cafe_crud  # noqa
-from app.crud.slot import slot_crud  # noqa
-from app.crud.table import table_crud  # noqa
+from app.crud.base import CRUDBase
+from app.crud.cafe import cafe_crud
+from app.crud.table import table_crud
 from app.exceptions.common import (
     CommonDBValidationError,
     ObjectDoesNotBelongToAnotherObject,
@@ -23,7 +23,7 @@ async def check_slot_exists(
 
     :return Slot
     """
-    slot = await slot_crud.get_by_pk(session=session, pk=slot_id)
+    slot = await CRUDBase(Slot).get_by_pk(session=session, pk=slot_id)
     if not slot:
         raise ObjectDoesNotExist(
             message=f"This slot {slot_id} does not exist!",

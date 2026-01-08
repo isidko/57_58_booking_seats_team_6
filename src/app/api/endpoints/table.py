@@ -55,7 +55,7 @@ async def list_table(
         ...,
         description='ID кафе, для которого запрашивается список столов',
         ge=1,
-        example=1,
+        examples=[1],
     ),
     show_all: Annotated[bool, Query(
         description=(
@@ -102,15 +102,15 @@ async def create_table(
         ...,
         description='ID кафе, в котором создается стол',
         ge=1,
-        example=1,
+        examples=[1],
     ),
     table_in: TableCreate = Body(
         ...,
         description='Данные для создание стола',
-        example={
+        examples=[{
             'description': 'Столик для двоих',
             'seat_number': 2,
-        },
+        }],
     ),
     session: AsyncSession = Depends(get_async_session),
     user: User = Security(get_current_user, scopes=[Scopes.TABLES_WRITE]),
@@ -151,13 +151,13 @@ async def get_table(
         ...,
         description='ID кафе, которому принадлежит стол',
         ge=1,
-        example=1,
+        examples=[1],
     ),
     table_id: int = Path(
         ...,
         description='ID стола, о котором запрашивается информация',
         ge=1,
-        example=2,
+        examples=[2],
     ),
     session: AsyncSession = Depends(get_async_session),
     user: User = Security(get_current_user, scopes=[Scopes.TABLES_READ]),
@@ -197,22 +197,22 @@ async def update_table(
         ...,
         description='ID кафе, которому принадлежит стол',
         ge=1,
-        example=1,
+        examples=[1],
     ),
     table_id: int = Path(
         ...,
         description='ID стола, о котором обновляется информация',
         ge=1,
-        example=2,
+        examples=[2],
     ),
     table_in: TableUpdate = Body(
         ...,
         description='Данные для обновления информации о столе',
-        example={
+        examples=[{
             'description': 'Столик для двоих',
             'seat_number': 2,
             'is_active': True,
-        },
+        }],
     ),
     session: AsyncSession = Depends(get_async_session),
     user: User = Security(get_current_user, scopes=[Scopes.TABLES_UPDATE]),

@@ -1,6 +1,8 @@
+import os
 from pathlib import Path
 
-from pydantic import field_validator
+from fastapi_mail import ConnectionConfig
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from app.core.log_level import LogLevel
@@ -9,7 +11,6 @@ PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
-
     """Settings for all project.
 
     Firstly, pydantic_settings will look for exported ENV VARS,
@@ -41,11 +42,32 @@ class Settings(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
-    environment: str
+    # Mail settings
+    mail_username: str | None = None
+    mail_password: SecretStr | None = None
+    mail_from: str | None = None
+    mail_port: int = 1025
+    mail_server: str = "localhost"
+    mail_starttls: bool = False
+    mail_ssl_tls: bool = False
+    use_credentials: bool = False
+
+    # Celery / Broker settings
+    rabbitmq_default_user: str
+    rabbitmq_default_pass: str
+    rabbitmq_host: str
+    rabbitmq_port: int
+    celery_result_backend: str
+    celery_timezone: str
+
+    environment: str | None = 'LOCAL'
     loglevel: LogLevel
 
+    # если ENVIRONMENT env var отсутствует, используем .env.local
+    # в остальных случаях - .env
     model_config = SettingsConfigDict(
-        env_file=PROJECT_ROOT / ".env",
+        env_file=PROJECT_ROOT / ".env.local" if not os.getenv(
+            'ENVIRONMENT', None) else PROJECT_ROOT / ".env",
         env_file_encoding='utf-8',
     )
 
@@ -59,3 +81,14 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+email_config = ConnectionConfig(
+    MAIL_USERNAME=settings.mail_username,
+    MAIL_PASSWORD=settings.mail_password,
+    MAIL_FROM=settings.mail_from,
+    MAIL_PORT=settings.mail_port,
+    MAIL_SERVER=settings.mail_server,
+    MAIL_STARTTLS=settings.mail_starttls,
+    MAIL_SSL_TLS=settings.mail_ssl_tls,
+    USE_CREDENTIALS=settings.use_credentials,
+)

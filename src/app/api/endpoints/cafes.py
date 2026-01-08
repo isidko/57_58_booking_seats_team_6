@@ -18,13 +18,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.endpoints.auth import get_current_user
 from app.core.constants import Scopes
 from app.core.db import get_async_session
-from app.crud.cafe import CRUDCafe
+from app.crud.cafe import cafe_crud
 from app.models.user import User, UserRole
 from app.policies.cafe import CafePolicy
 from app.schemas.cafe import CafeCreate, CafeInfo, CafeUpdate
 
 router = APIRouter()
-crud_cafe = CRUDCafe()
 policy = CafePolicy()
 
 CurrentUserRead = Annotated[
@@ -71,7 +70,7 @@ async def get_list_cafes(
     - список CafeInfo.
     """
     ctx = policy.read_context(current_user=current_user, show_all=show_all)
-    return await crud_cafe.get_multi(
+    return await cafe_crud.get_multi(
         session,
         active_objects_only=ctx.active_objects_only,
         where_expr=ctx.where_expr,
@@ -95,7 +94,7 @@ async def get_cafe(
     - CafeInfo, либо 404 если объект не найден/не доступен по фильтрам.
     """
     ctx = policy.read_context(current_user=current_user, show_all=show_all)
-    return await crud_cafe.get(
+    return await cafe_crud.get(
         session,
         cafe_id=cafe_id,
         active_objects_only=ctx.active_objects_only,
@@ -106,7 +105,7 @@ async def get_cafe(
 @router.post('', response_model=CafeInfo, status_code=status.HTTP_201_CREATED)
 async def create_cafe(
     cafe_data: CafeCreate,
-    current_user: Annotated[
+    _ : Annotated[
         User,
         Security(get_current_user, scopes=[Scopes.CAFES_WRITE.value]),
     ],
@@ -122,7 +121,7 @@ async def create_cafe(
     """
     managers_id = await _validate_managers_ids(session, cafe_data.managers_id)
 
-    return await crud_cafe.create(
+    return await cafe_crud.create(
         session,
         obj_in=cafe_data,
         managers_id=managers_id,
@@ -159,7 +158,7 @@ async def update_cafe(
     if current_user.role == UserRole.ADMIN and 'managers_id' in data:
         managers_id = await _validate_managers_ids(session, data.pop('managers_id') or [])
 
-    return await crud_cafe.update(
+    return await cafe_crud.update(
         session,
         cafe_id=cafe_id,
         data=data,

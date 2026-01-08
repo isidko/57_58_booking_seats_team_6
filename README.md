@@ -95,3 +95,13 @@ dish_cafes = Table(
 Документация: https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
 
 Уникальное ограничение не требуется, так как составной ключ сам по себе ограничивает дубликаты. Например, комбинация `(1,2)` и `(1,2)` как первичный ключ будет **ОГРАНИЧЕНА**
+
+---
+Как запустить celery?
+PYTHONPATH=src python -m celery -A app.tasks.email worker -l info
+Как зайти в rabbitmq dashboard?
+0.0.0.0:15672
+Как запустить Flower?
+PYTHONPATH=src python -m celery -A app.tasks.email flower
+Как зайти в него
+0.0.0.0:5555

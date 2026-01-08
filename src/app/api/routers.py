@@ -1,6 +1,14 @@
 from fastapi import APIRouter
 
-from app.api.endpoints import auth_router, booking_router, cafes_router, users_router
+from app.api.endpoints import (
+    auth_router,
+    booking_router,
+    cafes_router,
+    photo_router,
+    slot_router,
+    table_router,
+    users_router,
+)
 
 main_router = APIRouter()
 main_router.include_router(
@@ -13,8 +21,25 @@ main_router.include_router(
 )
 main_router.include_router(
     cafes_router,
-    prefix='/cafes',
-    tags=['cafes'],
+    prefix='/cafe',
+    tags=['cafe'],
+)
+main_router.include_router(
+    slot_router,
+    prefix='/slot',
+    tags=['slot'],
+)
+
+main_router.include_router(
+    table_router,
+    prefix='/table',
+    tags=['table'],
+)
+
+main_router.include_router(
+    photo_router,
+    prefix='/photo',
+    tags=['photo'],
 )
 main_router.include_router(
     users_router,

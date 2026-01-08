@@ -69,7 +69,7 @@ async def create_slot(
     cafe_id: int = Path(...),
     slot_in: SlotCreate,
     session: AsyncSession = Depends(get_async_session),
-    current_user: User = Security(
+    _ : User = Security(
         get_current_active_user,
         scopes=[Scopes.TIME_SLOTS_WRITE],
     ),
@@ -108,7 +108,7 @@ async def get_slot(
     """
     cafe: Cafe = await check_cafe_exists(session=session, cafe_id=cafe_id)
 
-    slot = await session.get(Slot, slot_id)
+    slot: Slot | None = await session.get(Slot, slot_id)
     if not slot:
         raise ObjectDoesNotExist(
             message=f"This slot {slot_id} does not exist!",
@@ -134,7 +134,7 @@ async def update_slot(
     slot_id: int = Path(...),
     slot_in: SlotUpdate,
     session: AsyncSession = Depends(get_async_session),
-    current_user: User = Security(
+    _ : User = Security(
         get_current_active_user,
         scopes=[Scopes.TIME_SLOTS_UPDATE],
     ),
@@ -145,7 +145,7 @@ async def update_slot(
     """
     cafe: Cafe = await check_cafe_exists(session=session, cafe_id=cafe_id)
 
-    slot = await session.get(Slot, slot_id)
+    slot: Slot | None = await session.get(Slot, slot_id)
     if not slot:
         raise ObjectDoesNotExist(
             message=f"This slot {slot_id} does not exist!",

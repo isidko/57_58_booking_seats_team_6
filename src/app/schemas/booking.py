@@ -17,8 +17,8 @@ from ..core.constants import (
 )
 from .cafe import CafeShortInfo
 from .common import TimestampedActiveSchema
+from .slot import SlotShortInfo
 from .table import TableShortInfo
-from .timeslot import TimeSlotShortInfo  # noqa
 from .user import UserShortInfo
 from app.models.booking import BookingStatus
 
@@ -96,7 +96,7 @@ class TableSlotInfo(BaseModel):
         examples=[1],
     )
     table: TableShortInfo
-    slot: TimeSlotShortInfo
+    slot: SlotShortInfo
 
     model_config = ConfigDict(from_attributes=True)
 

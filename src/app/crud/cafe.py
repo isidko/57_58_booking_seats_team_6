@@ -24,10 +24,6 @@ class CRUDCafe(CRUDBase[Cafe, CafeCreate, CafeUpdate]):
     - переиспользовать CRUD без HTTP-контекста.
     """
 
-    def __init__(self) -> None:
-        """Инициализирует CRUD-обёртку для модели Cafe."""
-        super().__init__(Cafe)
-
     async def get(
         self,
         session: AsyncSession,
@@ -178,3 +174,6 @@ class CRUDCafe(CRUDBase[Cafe, CafeCreate, CafeUpdate]):
         await session.commit()
         await session.refresh(cafe)
         return cafe
+
+
+cafe_crud = CRUDCafe(Cafe)
