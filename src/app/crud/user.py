@@ -39,7 +39,7 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
             conditions.append(User.phone == phone)
 
         if conditions:
-            query = select(exists().select_from(User).where(or_(*conditions)))
+            query = select(exists().where(or_(*conditions)))
             if exclude_user_id:
                 query = query.where(User.id != exclude_user_id)
             if await session.scalar(query):

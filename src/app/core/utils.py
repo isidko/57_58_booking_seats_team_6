@@ -84,6 +84,8 @@ class PhotoUtils:
             # Открытие и конвертация изображения
             try:
                 image = Image.open(io.BytesIO(contents))
+                if image.mode == "RGBA":
+                    image = image.convert("RGB")
                 log_message(
                     message=(
                         f'Изображение открыто: формат={image.format}, '
