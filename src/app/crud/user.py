@@ -39,7 +39,7 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
             conditions.append(User.phone == phone)
 
         if conditions:
-            query = select(exists()).select_from(User).where(or_(*conditions))
+            query = select(exists().select_from(User).where(or_(*conditions)))
             if exclude_user_id:
                 query = query.where(User.id != exclude_user_id)
             if await session.scalar(query):
@@ -57,7 +57,18 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
             email=obj_in.email,
             phone=obj_in.phone,
         )
-        user = await super().create(session, obj_in, **extra_fields)
+
+        # Преобразуем UserCreate в словарь, исключая пароль
+        obj_in_data = obj_in.model_dump(exclude={'password'})
+
+        # Объединяем данные (extra_fields содержит password_hash из endpoint)
+        create_data = {**obj_in_data, **extra_fields}
+
+        # Создаем пользователя
+        user = self.model(**create_data)
+        session.add(user)
+        await session.commit()
+        await session.refresh(user)
         log_message(
             f'Создан пользователь {user.id} ({user.username}).',
             LogLevel.INFO,

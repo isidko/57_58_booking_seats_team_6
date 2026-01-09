@@ -16,7 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.endpoints.auth import get_current_user
-from app.core.constants import MAX_FILE_SIZE, Scopes
+from app.core.constants import Scopes
 from app.core.db import get_async_session
 from app.core.error_messages import ErrorMessages
 from app.core.log_level import LogLevel
@@ -157,7 +157,6 @@ async def upload_photo(
     file: UploadFile = File(
         ...,
         description='Изображение в формате JPG или PNG (макс. 5 МБ)',
-        max_length=MAX_FILE_SIZE,
     ),
     session: AsyncSession = Depends(get_async_session),
     current_user: User = Security(

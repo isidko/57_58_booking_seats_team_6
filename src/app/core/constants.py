@@ -102,6 +102,7 @@ MANAGER_PERMISSIONS = list({
     Scopes.USERS_UPDATE.value,
     Scopes.CAFES_UPDATE.value,
     Scopes.TABLES_UPDATE.value,
+    Scopes.TABLES_WRITE.value,
     Scopes.TIME_SLOTS_WRITE.value,
     Scopes.TIME_SLOTS_UPDATE.value,
     Scopes.DISHES_WRITE.value,

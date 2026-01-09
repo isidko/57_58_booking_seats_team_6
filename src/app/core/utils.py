@@ -8,6 +8,7 @@ from fastapi import HTTPException, UploadFile, status
 
 from app.core.constants import (
     ALLOWED_CONTENT_TYPES,
+    MAX_FILE_SIZE,
     SYSTEM_USERNAME,
     UPLOAD_DIR,
 )
@@ -39,6 +40,18 @@ class PhotoUtils:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=ErrorMessages.unsupported_format(
                     allowed_formats=', '.join(ALLOWED_CONTENT_TYPES),
+                ),
+            )
+        # Проверка размера
+        contents = await file.read(MAX_FILE_SIZE + 1)
+        await file.seek(0)
+
+        if len(contents) > MAX_FILE_SIZE:
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    'Файл слишком большой. Максимум: '
+                    f'{MAX_FILE_SIZE // (1024*1024)} МБ'
                 ),
             )
 

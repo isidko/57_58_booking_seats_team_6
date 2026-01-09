@@ -28,7 +28,7 @@ async def check_cafe_exists(
 
     :return Cafe
     """
-    cafe = await cafe_crud.get_by_pk(session=session, obj_id=cafe_id)
+    cafe = await cafe_crud.get_by_pk(session=session, pk=cafe_id)
     if not cafe:
         raise ObjectDoesNotExist(message=f'Кафе ID={cafe_id} не найдено!')
     return cafe
@@ -83,6 +83,8 @@ async def list_table(
             active_objects_only=not show_all,
             where_expr=Table.cafe_id == cafe_id,
         )
+    if not cafe.is_active:
+        raise ObjectDoesNotExist(message=f'Кафе ID={cafe_id} не найдено!')
     return await table_crud.get_multi(
         session=session,
         active_objects_only=True,
