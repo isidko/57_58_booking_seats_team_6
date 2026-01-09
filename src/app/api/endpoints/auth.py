@@ -159,7 +159,11 @@ async def get_current_active_user(
     return current_user
 
 
-@router.post("/login")
+@router.post(
+    "/login",
+    summary='Получение токена авторизации',
+    description='Возвращает токен для последующей авторизации пользователя.',
+)
 async def login_for_access_token(
         form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
         session: AsyncSession = Depends(get_async_session),

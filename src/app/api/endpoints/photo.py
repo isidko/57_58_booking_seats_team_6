@@ -32,7 +32,7 @@ router = APIRouter()
 
 @router.get(
     '/media/{media_id}',
-    summary='Получить фото',
+    summary='Возвращает изображение в бинарном виде',
     response_class=Response,
 )
 async def get_photo(
@@ -148,9 +148,10 @@ async def get_photo(
 @router.post(
     '/media',
     response_model=PhotoInfo,
-    summary='Загрузить фото',
+    summary='Загрузка изображения',
     description=(
-        'Загрузка изображения. Только для администраторов и менеджеров.'
+        'Загрузка изображения на сервер. Поддерживаются форматы jpg, png. '
+        'Размер файла не более 5Мб. Только для администраторов и менеджеров'
     ),
 )
 async def upload_photo(

@@ -23,6 +23,12 @@ slot_crud_base = CRUDBase[Slot, SlotCreate, SlotUpdate](Slot)
 @router.get(
     '/cafe/{cafe_id}/time_slots',
     response_model=list[SlotInfo],
+    summary='Список временных слотов в кафе',
+    description=(
+        'Получение списка доступных для бронирования временных слотов в кафе. '
+        'Для администраторов и менеджеров - все столы (с возможностью выбора)'
+        ', для пользователей - только активные.'
+    ),
 )
 async def list_slot(
     *,
@@ -63,6 +69,11 @@ async def list_slot(
 @router.post(
     '/cafe/{cafe_id}/time_slots',
     response_model=SlotInfo,
+    summary='Новый временной слот в кафе',
+    description=(
+        'Создание нового временного слота в кафе. Только для администраторов '
+        'и менеджеров.'
+    ),
 )
 async def create_slot(
     *,
@@ -90,6 +101,12 @@ async def create_slot(
 @router.get(
     '/cafe/{cafe_id}/time_slots/{slot_id}',
     response_model=SlotInfo,
+    summary='Информация о временном слоте в кафе по его ID',
+    description=(
+        'Получение информации о временном слоте в кафе по его ID. Для '
+        'администраторов и менеджеров - все столы, для пользователей - '
+        'только активные.'
+    ),
 )
 async def get_slot(
     *,
@@ -127,6 +144,11 @@ async def get_slot(
 @router.patch(
     '/cafe/{cafe_id}/time_slots/{slot_id}',
     response_model=SlotInfo,
+    summary='Обновление информации о временном слоте в кафе по его ID',
+    description=(
+        'Обновление информации о временом слоте в кафе по его ID. Только для '
+        'администраторов и менеджеров.'
+    ),
 )
 async def update_slot(
     *,

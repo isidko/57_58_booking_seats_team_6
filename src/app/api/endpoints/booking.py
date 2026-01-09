@@ -30,8 +30,16 @@ from app.utils.security import get_owned_by_pk
 router = APIRouter()
 
 
-@router.get('/',
-            response_model=list[BookingInfo])
+@router.get(
+    '/',
+    response_model=list[BookingInfo],
+    summary='Получение списка бронирований',
+    description=(
+        'Получение списка бронирований. Для администраторов и менеджеров - '
+        'все бронирования (с возможностью выбора), для пользователей - только '
+        'свои (параметры игнорируются, кроме ID кафе).'
+    ),
+)
 async def booking_list(
         *,
         active_objects_only: bool | None = Query(True, examples=[False]),
@@ -61,8 +69,15 @@ async def booking_list(
     )
 
 
-@router.post('/',
-             response_model=BookingInfo)
+@router.post(
+    '/',
+    response_model=BookingInfo,
+    summary='Создание нового бронирования',
+    description=(
+        'Создает новое бронирования. Только для авторизированных '
+        'пользователей.'
+    ),
+)
 async def create_booking(
         booking: BookingCreate,
         session: AsyncSession = Depends(get_async_session),
@@ -135,8 +150,15 @@ async def create_booking(
     return db_obj
 
 
-@router.get('/{booking_id}',
-            response_model=BookingInfo)
+@router.get(
+    '/{booking_id}',
+    response_model=BookingInfo,
+    summary='Получение информации о бронировании по его ID',
+    description=(
+        'Получение информации о бронировании по его ID. Для администраторов '
+        'и менеджеров - все бронирования, для пользователей - только свои.'
+    ),
+)
 async def get_booking(
         *,
         booking_id: int = Path(..., title='Booking id', examples=[5]),
@@ -161,8 +183,15 @@ async def get_booking(
     return await booking_crud.get_by_pk(session=session, pk=booking_id)
 
 
-@router.patch('/{booking_id}',
-              response_model=BookingInfo)
+@router.patch(
+    '/{booking_id}',
+    response_model=BookingInfo,
+    summary='Обновление информации о бронировании по его ID',
+    description=(
+        'Обновление информации о бронировании по его ID. Для администраторов '
+        'и менеджеров - все бронирования, для пользователей - только свои.'
+    ),
+)
 async def update_booking(
         booking_in: BookingUpdate,
         booking_id: int = Path(..., title='Booking id', examples=[5]),

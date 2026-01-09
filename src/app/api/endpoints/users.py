@@ -28,11 +28,10 @@ router = APIRouter()
 @router.get(
     '/',
     response_model=list[UserInfo],
-    summary='Получить список пользователей',
+    summary='Получение списка пользователей',
     description=(
-        'Возвращает список пользователей. '
-        'Для ADMIN и MANAGER доступен просмотр всех пользователей. '
-        'Для USER доступ запрещён.'
+        'Возвращает информацию о всех пользователях. Только для '
+        'администраторов или менеджеров'
     ),
 )
 async def list_users(
@@ -52,11 +51,64 @@ async def list_users(
     )
 
 
+@router.post(
+    '/',
+    response_model=UserInfo,
+    summary='Регистрация нового пользователя',
+    description=(
+        'Создает нового пользователя с указанными данными.\n\n'
+        'Обязательные поля:\n'
+        '- username\n'
+        '- password\n'
+        '- email или phone'
+    ),
+)
+async def create_user(
+    *,
+    user_in: UserCreate,
+    session: AsyncSession = Depends(get_async_session),
+) -> UserInfo:
+    """Создать нового пользователя.
+
+    Обязательные поля:
+    - username: имя пользователя (должно быть уникальным)
+    - password: пароль
+    - email или phone: хотя бы одно из этих полей должно быть указано
+
+    Доступ:
+    - Доступно всем (не требуется авторизация).
+
+    Валидация:
+    - Проверяет уникальность username, email и phone.
+    """
+    # Проверяем уникальность
+    existing_user = await user_crud.get_by_username(session, user_in.username)
+    if existing_user:
+        raise DBConflictError(message=f'Пользователь с username "{user_in.username}" уже существует')
+
+    password_hash = get_password_hash(user_in.password)
+
+    # Создаём пользователя через CRUD (там проверяется email и phone)
+    try:
+        db_user = await user_crud.create(
+            session=session,
+            obj_in=user_in,
+            password_hash=password_hash,
+        )
+    except ValueError as e:
+        raise DBConflictError(message=str(e))
+
+    return UserInfo.model_validate(db_user)
+
+
 @router.get(
     '/me',
     response_model=UserInfo,
-    summary='Получить текущего пользователя',
-    description='Возвращает информацию о текущем авторизованном пользователе.',
+    summary='Получение информации о текущем пользователе',
+    description=(
+        'Возвращает информацию о текущем пользователе. Только для '
+        'авторизированных пользователей'
+    ),
 )
 async def get_current_user_info(
     *,
@@ -73,10 +125,10 @@ async def get_current_user_info(
 @router.patch(
     '/me',
     response_model=UserInfo,
-    summary='Обновить информацию о текущем пользователе',
+    summary='Обновление информации о текущем пользователе',
     description=(
-        'Обновляет информацию о текущем авторизованном пользователе. '
-        'Пользователь не может изменять свою роль и статус активности.'
+        'Возвращает обновленную информацию о пользователе. Только для '
+        'авторизированных пользователей'
     ),
 )
 async def update_current_user(
@@ -129,11 +181,10 @@ async def update_current_user(
 @router.get(
     '/{user_id}',
     response_model=UserInfo,
-    summary='Получить пользователя по ID',
+    summary='Получение информации о пользователе по его ID',
     description=(
-        'Возвращает информацию о пользователе по ID. '
-        'USER может получить только свою информацию. '
-        'ADMIN и MANAGER могут получить информацию о любом пользователе.'
+        'Возвращает информацию о пользователе по его ID. Только для '
+        'администраторов или менеджеров'
     ),
 )
 async def get_user(
@@ -160,65 +211,13 @@ async def get_user(
     return UserInfo.model_validate(user)
 
 
-@router.post(
-    '/',
-    response_model=UserInfo,
-    summary='Создать нового пользователя',
-    description=(
-        'Создает нового пользователя с указанными данными.\n\n'
-        'Обязательные поля:\n'
-        '- username\n'
-        '- password\n'
-        '- email или phone\n\n'
-        'Доступно всем пользователям.'
-    ),
-)
-async def create_user(
-    *,
-    user_in: UserCreate,
-    session: AsyncSession = Depends(get_async_session),
-) -> UserInfo:
-    """Создать нового пользователя.
-
-    Обязательные поля:
-    - username: имя пользователя (должно быть уникальным)
-    - password: пароль
-    - email или phone: хотя бы одно из этих полей должно быть указано
-
-    Доступ:
-    - Доступно всем (не требуется авторизация).
-
-    Валидация:
-    - Проверяет уникальность username, email и phone.
-    """
-    # Проверяем уникальность
-    existing_user = await user_crud.get_by_username(session, user_in.username)
-    if existing_user:
-        raise DBConflictError(message=f'Пользователь с username "{user_in.username}" уже существует')
-
-    password_hash = get_password_hash(user_in.password)
-
-    # Создаём пользователя через CRUD (там проверяется email и phone)
-    try:
-        db_user = await user_crud.create(
-            session=session,
-            obj_in=user_in,
-            password_hash=password_hash,
-        )
-    except ValueError as e:
-        raise DBConflictError(message=str(e))
-
-    return UserInfo.model_validate(db_user)
-
-
 @router.patch(
     '/{user_id}',
     response_model=UserInfo,
-    summary='Обновить информацию о пользователе',
+    summary='Обновление информации о пользователе по его ID',
     description=(
-        'Обновляет информацию о пользователе (частичное обновление). '
-        'USER может обновлять только свою информацию (не может изменять роль и is_active). '
-        'ADMIN и MANAGER могут обновлять любых пользователей.'
+        'Возвращает обновленную информацию о пользователе по его ID. Только '
+        'для администраторов или менеджеров'
     ),
 )
 async def update_user(

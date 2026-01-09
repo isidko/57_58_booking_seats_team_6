@@ -42,12 +42,11 @@ def is_owned_cafe(cafe: Cafe, user_id: int) -> bool:
 @router.get(
     '/cafe/{cafe_id}/tables',
     response_model=list[TableInfo],
-    summary='Получить список столов кафе',
+    summary='Список столов в кафе',
     description=(
-        'Возвращает список столов для указанного кафе. '
-        'USER всегда видит только активные столы. '
-        'MANAGER и ADMIN видят все столы при show_all=True, '
-        'иначе только активные.'
+        'Получение списка доступных для бронирования столов в кафе. Для '
+        'администраторов и менеджеров - все столы (с возможностью выбора), '
+        'для пользователей - только активные.'
     ),
 )
 async def list_table(
@@ -96,8 +95,10 @@ async def list_table(
     '/cafe/{cafe_id}/tables',
     response_model=TableInfo,
     status_code=status.HTTP_201_CREATED,
-    summary='Создать новый стол в кафе',
-    description='Создает новый стол для указанного кафе',
+    summary='Новый стол в кафе',
+    description=(
+        'Создание нового стола кафе. Только для администраторов и менеджеров.'
+    ),
 )
 async def create_table(
     cafe_id: int = Path(
@@ -145,8 +146,11 @@ async def create_table(
 @router.get(
     '/cafe/{cafe_id}/tables/{table_id}',
     response_model=TableInfo,
-    summary='Получить информацию о столе',
-    description='Возвращает полную информацию о конкретном столе кафе',
+    summary='Информация о столе в кафе по его ID',
+    description=(
+        'Получение информации о столе в кафе по его ID. Для администраторов '
+        'и менеджеров - все столы, для пользователей - только активные.'
+    ),
 )
 async def get_table(
     cafe_id: int = Path(
@@ -191,8 +195,11 @@ async def get_table(
 @router.patch(
     '/cafe/{cafe_id}/tables/{table_id}',
     response_model=TableInfo,
-    summary='Обновить информацию о столе',
-    description='Обновляет информацию о столе (частичное обновление)',
+    summary='Обновление информацию о столе в кафе по его ID',
+    description=(
+        'Обновление информации о столе в кафе по его ID. '
+        'Только для администраторов и менеджеров.'
+    ),
 )
 async def update_table(
     cafe_id: int = Path(

@@ -53,7 +53,15 @@ async def _validate_managers_ids(
     return unique_ids
 
 
-@router.get('', response_model=list[CafeInfo])
+@router.get(
+    '',
+    response_model=list[CafeInfo],
+    summary='Получение списка кафе',
+    description=(
+        'Получение списка кафе. Для администраторов и менеджеров - все кафе '
+        '(с возможностью выбора), для пользователей - только активные.'
+    ),
+)
 async def get_list_cafes(
     current_user: CurrentUserRead,
     show_all: bool = False,
@@ -77,32 +85,15 @@ async def get_list_cafes(
     )
 
 
-@router.get('/{cafe_id}', response_model=CafeInfo)
-async def get_cafe(
-    cafe_id: int,
-    current_user: CurrentUserRead,
-    show_all: bool = False,
-    session: AsyncSession = Depends(get_async_session),
-) -> CafeInfo:
-    """Получить кафе по ID.
-
-    Доступ к неактивным кафе регулируется policy:
-    - для некоторых ролей show_all=True запрещён,
-    - для MANAGER действует ограничение “неактивные только свои”.
-
-    Возвращает:
-    - CafeInfo, либо 404 если объект не найден/не доступен по фильтрам.
-    """
-    ctx = policy.read_context(current_user=current_user, show_all=show_all)
-    return await cafe_crud.get(
-        session,
-        cafe_id=cafe_id,
-        active_objects_only=ctx.active_objects_only,
-        where_expr=ctx.where_expr,
-    )
-
-
-@router.post('', response_model=CafeInfo, status_code=status.HTTP_201_CREATED)
+@router.post(
+    '',
+    response_model=CafeInfo,
+    status_code=status.HTTP_201_CREATED,
+    summary='Создание нового кафе',
+    description=(
+        'Создает новое кафе. Только для администраторов и менеджеров.'
+    ),
+)
 async def create_cafe(
     cafe_data: CafeCreate,
     _ : Annotated[
@@ -128,7 +119,48 @@ async def create_cafe(
     )
 
 
-@router.patch('/{cafe_id}', response_model=CafeInfo)
+@router.get(
+    '/{cafe_id}',
+    response_model=CafeInfo,
+    summary='Получение информации о кафе по его ID',
+    description=(
+        'Получение информации о кафе по его ID. Для администраторов и '
+        'менеджеров - все кафе, для пользователей - только активные.'
+    ),
+)
+async def get_cafe(
+    cafe_id: int,
+    current_user: CurrentUserRead,
+    show_all: bool = False,
+    session: AsyncSession = Depends(get_async_session),
+) -> CafeInfo:
+    """Получить кафе по ID.
+
+    Доступ к неактивным кафе регулируется policy:
+    - для некоторых ролей show_all=True запрещён,
+    - для MANAGER действует ограничение “неактивные только свои”.
+
+    Возвращает:
+    - CafeInfo, либо 404 если объект не найден/не доступен по фильтрам.
+    """
+    ctx = policy.read_context(current_user=current_user, show_all=show_all)
+    return await cafe_crud.get(
+        session,
+        cafe_id=cafe_id,
+        active_objects_only=ctx.active_objects_only,
+        where_expr=ctx.where_expr,
+    )
+
+
+@router.patch(
+    '/{cafe_id}',
+    response_model=CafeInfo,
+    summary='Обновление информации о кафе по его ID',
+    description=(
+        'Обновление информации о кафе по его ID. Только для администраторов '
+        'и менеджеров.'
+    ),
+)
 async def update_cafe(
     cafe_id: int,
     cafe_update: CafeUpdate,
