@@ -134,6 +134,8 @@ async def create_booking(
         body=BookingInfo.model_validate(db_obj, from_attributes=True).model_dump_json(),
         subtype="plain", # noqa
     )
+    send_email.delay(message.model_dump(mode="json"))
+
     # отправляем сообщение в брокер.
     # первый попавшийся воркер подберет сообщение и будет ждать определенного времени.
     # если время наступило, воркер выполнит задачу. При падении воркера, задачи исчезают.
