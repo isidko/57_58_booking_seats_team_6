@@ -36,7 +36,7 @@ services:
       - .env
     environment:
       <<: *backend-env
-    depends_on: [db, rabbitmq, mailpit]
+    depends_on: [db, rabbitmq, mailpit, nginx]
 
   nginx:
     image: peterdockerhub/practicum-final-nginx:latest
@@ -61,10 +61,10 @@ services:
     environment:
       <<: *backend-env
       FLOWER_UNAUTHENTICATED_API: 1
-    command: celery -A app.core.celery_app:celery_app flower --port=5555
+    command: celery -A app.core.celery_app:celery_app flower
     ports:
       - "5555:5555"
-    depends_on: [rabbitmq]
+    depends_on: [rabbitmq, worker]
 
   rabbitmq:
     image: rabbitmq:4.2.2-management
