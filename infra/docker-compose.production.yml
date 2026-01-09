@@ -51,7 +51,7 @@ services:
       - .env
     environment:
       <<: *backend-env
-    command: celery -A app.core.celery_app:celery_app worker -l info
+    command: celery -A app.core.celery_app:celery_app worker -l info -E --without-gossip --without-mingle --without-heartbeat
     depends_on: [db, rabbitmq]
 
   flower:
@@ -60,6 +60,7 @@ services:
       - .env
     environment:
       <<: *backend-env
+      FLOWER_UNAUTHENTICATED_API: 1
     command: celery -A app.core.celery_app:celery_app flower --port=5555
     ports:
       - "5555:5555"
