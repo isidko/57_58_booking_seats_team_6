@@ -1,5 +1,37 @@
 ## Локальная разработка
 
+## Структура проекта
+
+```
+.
+├── src/                    # Исходный код приложения
+│   ├── app/               # Основной код приложения
+│   │   ├── api/           # API endpoints и роутеры
+│   │   │   └── endpoints/ # Эндпоинты: auth, booking, cafe, slot, table, photo, users
+│   │   ├── core/          # Ядро приложения (config, db, logging, celery)
+│   │   ├── crud/          # CRUD операции для моделей
+│   │   ├── models/        # SQLAlchemy модели
+│   │   ├── schemas/       # Pydantic схемы
+│   │   ├── tasks/         # Celery задачи
+│   │   ├── utils/         # Утилиты
+│   │   └── main.py        # Точка входа приложения
+│   └── alembic/           # Миграции базы данных
+├── infra/                 # Инфраструктура
+│   ├── docker-compose.dev.yml          # Docker Compose для разработки
+│   ├── docker-compose.local.yml        # Docker Compose для preprod для локального тестирования всех контейнеров
+│   ├── docker-compose.production.yml   # Docker Compose для production
+│   └── startup.bash       # Скрипт запуска с миграциями
+├── nginx/                 # Конфигурация Nginx
+├── tests/                 # Тесты
+├── documentation/         # Документация
+├── Dockerfile             # Docker образ приложения
+├── requirements.txt       # Основные зависимости
+├── requirements_style.txt # Зависимости для стилизации
+├── ruff.toml             # Конфигурация Ruff
+├── LOCAL_DEVELOPMENT.md  # Инструкции по локальной разработке
+└── PRODUCTION.md         # Инструкции по деплою в production
+```
+
 ### 1. Запуск инфраструктуры
 
 Для локальной разработки используйте `docker-compose.dev.yml`:
